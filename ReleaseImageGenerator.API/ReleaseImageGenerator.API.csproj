@@ -20,4 +20,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ReleaseImageGenerator.Domain\ReleaseImageGenerator.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
