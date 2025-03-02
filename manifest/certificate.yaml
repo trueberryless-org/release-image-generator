@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: release-image-generator
+  namespace: release-image-generator
+spec:
+  secretName: release-image-generator
+  issuerRef:
+    name: acme-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - "release-image-generator.trueberryless.org"
