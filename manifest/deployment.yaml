@@ -17,5 +17,5 @@ spec:
     spec:
       containers:
         - name: release-image-generator
-          image: "trueberryless/release-image-generator"
+          image: "trueberryless/release-image-generator:0.1.0"
           imagePullPolicy: Always
