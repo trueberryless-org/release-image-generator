@@ -108,7 +108,8 @@ public class ImageGenerator : IImageGenerator
             Color = SKColors.White,
             TextSize = fontsize,
             IsAntialias = true,
-            Typeface = typeface
+            Typeface = typeface,
+            TextScaleX = 0.95f
         };
 
         var textWidth = paint.MeasureText(Text);
