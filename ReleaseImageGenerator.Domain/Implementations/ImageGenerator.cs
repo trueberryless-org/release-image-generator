@@ -23,7 +23,7 @@ public class ImageGenerator : IImageGenerator
     {
         using var surface = SKSurface.Create(new SKImageInfo(Width, Height));
         var canvas = surface.Canvas;
-        
+
         var random = new Random();
 
         // Generate a harmonious color palette around the primary color
@@ -33,30 +33,40 @@ public class ImageGenerator : IImageGenerator
         var colorPalette = ColorGenerator.GetRandomPalette(primaryColor, 8).Select(UnicolourToSKColor).ToArray();
 
         var backgroundRotationIsClockwise = random.Next(2) == 0;
-        
+
         // Fill with a smooth gradient background based on the palette
         var paint = new SKPaint
         {
             Shader = SKShader.CreateLinearGradient(
-                new SKPoint(0, random.Next(backgroundRotationIsClockwise ? -1000 : Height, backgroundRotationIsClockwise ? 0 : Height + 1000)),
-                new SKPoint(Width, random.Next(backgroundRotationIsClockwise ? Height : -1000, backgroundRotationIsClockwise ? Height + 1000: 0)),
+                new SKPoint(0,
+                    random.Next(backgroundRotationIsClockwise ? -1000 : Height,
+                        backgroundRotationIsClockwise ? 0 : Height + 1000)),
+                new SKPoint(Width,
+                    random.Next(backgroundRotationIsClockwise ? Height : -1000,
+                        backgroundRotationIsClockwise ? Height + 1000 : 0)),
                 colorPalette,
                 SKShaderTileMode.Clamp
             )
         };
-        
-        var colorPalette2 = ColorGenerator.GetRandomPalette(primaryColor, 6, 60, 0.3D).Select(UnicolourToSKColor).ToArray();
+
+        var colorPalette2 = ColorGenerator.GetRandomPalette(primaryColor, 6, 60, 0.3D).Select(UnicolourToSKColor)
+            .ToArray();
         var paint2 = new SKPaint
         {
             Shader = SKShader.CreateLinearGradient(
-                new SKPoint(0, random.Next(!backgroundRotationIsClockwise ? -1000 : Height, !backgroundRotationIsClockwise ? 0 : Height + 1000)),
-                new SKPoint(Width, random.Next(!backgroundRotationIsClockwise ? Height : -1000, !backgroundRotationIsClockwise ? Height + 1000: 0)),
+                new SKPoint(0,
+                    random.Next(!backgroundRotationIsClockwise ? -1000 : Height,
+                        !backgroundRotationIsClockwise ? 0 : Height + 1000)),
+                new SKPoint(Width,
+                    random.Next(!backgroundRotationIsClockwise ? Height : -1000,
+                        !backgroundRotationIsClockwise ? Height + 1000 : 0)),
                 colorPalette2,
                 SKShaderTileMode.Clamp
             )
         };
-        
-        var colorPalette3 = ColorGenerator.GetRandomPalette(primaryColor, 3, 50, 0.2D).Select(UnicolourToSKColor).ToArray();
+
+        var colorPalette3 = ColorGenerator.GetRandomPalette(primaryColor, 3, 50, 0.2D).Select(UnicolourToSKColor)
+            .ToArray();
         var paint3 = new SKPaint
         {
             Shader = SKShader.CreateRadialGradient(
@@ -72,6 +82,9 @@ public class ImageGenerator : IImageGenerator
 
         // Add some noise
         AddNoise(canvas, Width, Height);
+        
+        // Add some pattern
+        PatternGenerator.AddBackgroundPatterns(canvas, Width, Height, random, primaryColor.Oklch.L);
 
         // Load JetBrains Mono font
         var typeface = Font switch
@@ -84,7 +97,7 @@ public class ImageGenerator : IImageGenerator
             SupportedFonts.JETBRAINS_LIGHT => SKTypeface.FromFile("./fonts/JetbrainsMono-Light.ttf"),
             SupportedFonts.SOURCE_CODE_BOLD => SKTypeface.FromFile("./fonts/SourceCodePro-Bold.ttf"),
             SupportedFonts.SOURCE_CODE_MEDIUM => SKTypeface.FromFile("./fonts/SourceCodePro-Medium.ttf"),
-            SupportedFonts.SOURCE_CODE_LIGHT  => SKTypeface.FromFile("./fonts/SourceCodePro-Light.ttf"),
+            SupportedFonts.SOURCE_CODE_LIGHT => SKTypeface.FromFile("./fonts/SourceCodePro-Light.ttf"),
             _ => SKTypeface.Default
         };
         var fontsize = GetMaxFontSize(Width - Width / 3, typeface, Text, 1f, Width > Height ? Height / 3 : Width / 3);
@@ -166,8 +179,9 @@ public class ImageGenerator : IImageGenerator
             canvas.DrawPoint(random.Next(width), random.Next(height), noisePaint);
         }
     }
-    
-    public float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text, float degreeOfCertainty = 1f, float maxFont = 100f)
+
+    public float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text, float degreeOfCertainty = 1f,
+        float maxFont = 100f)
     {
         var max = maxFont; // The upper bound. We know the font size is below this value
         var min = 0f; // The lower bound, We know the font size is equal to or above this value
@@ -202,4 +216,6 @@ public class ImageGenerator : IImageGenerator
             }
         }
     }
+
+    
 }
