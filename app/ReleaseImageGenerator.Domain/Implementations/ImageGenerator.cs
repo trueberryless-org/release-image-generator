@@ -80,11 +80,11 @@ public class ImageGenerator : IImageGenerator
         canvas.DrawRect(0, 0, Width, Height, paint2);
         canvas.DrawRect(0, 0, Width, Height, paint3);
 
-        // Add some noise
-        AddNoise(canvas, Width, Height);
-
         // Add some pattern
         PatternGenerator.AddBackgroundPatterns(canvas, Width, Height, random, primaryColor.Oklch.L);
+        
+        // Add some noise
+        NoiseGenerator.AddNoise(canvas, Width, Height);
 
         // Load JetBrains Mono font
         var typeface = Font switch
@@ -125,16 +125,16 @@ public class ImageGenerator : IImageGenerator
             IsAntialias = true,
             Typeface = typeface,
             TextScaleX = 0.95f,
-            Color = SKColors.Black.WithAlpha(100),
+            Color = SKColors.Black.WithAlpha(80),
             MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 5)
         };
-        canvas.DrawText(Text, textX + 3, textY + 3, textShadowPaint);
+        canvas.DrawText(Text, textX + fontsize / 100, textY + fontsize / 100, textShadowPaint);
 
         // Now set up the gradient with proper positioning
         textPaint.Shader = SKShader.CreateLinearGradient(
             new SKPoint(textX, textY + textBounds.Top),
             new SKPoint(textX + textWidth, textY + textBounds.Bottom),
-            new[] { SKColors.White, UnicolourToSKColor(new Unicolour(ColourSpace.Oklch, (0.8, 0, 0), 1D)) },
+            new[] { SKColors.White, UnicolourToSKColor(new Unicolour(ColourSpace.Oklch, (0.8 + Math.Max(0, (primaryColor.Oklch.L - 0.8) * 0.5), 0, 0), 1D)) },
             SKShaderTileMode.Clamp
         );
 
@@ -158,17 +158,19 @@ public class ImageGenerator : IImageGenerator
             MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 10)
         };
 
-        var padding = 80;
+        var padding = fontsize / 3;
         var rect = new SKRect(textX - padding, textY + textBounds.Top - padding, textX + textWidth + padding,
             textY + padding);
 
         // Draw shadow in the direction of the light
-        canvas.Translate(10, 10);
-        canvas.DrawRoundRect(rect, 50, 50, shadowPaint);
-        canvas.Translate(-10, -10);
+        canvas.Translate(fontsize / 50, fontsize / 50);
+        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, shadowPaint);
+        canvas.Translate(-fontsize / 50, -fontsize / 50);
 
-        canvas.DrawRoundRect(rect, 50, 50, bgPaint);
-        canvas.DrawRoundRect(rect, 50, 50, borderPaint);
+        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, bgPaint);
+        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, borderPaint);
+        
+
 
         // Draw the text
         canvas.DrawText(Text, textX, textY, textPaint);
@@ -188,16 +190,6 @@ public class ImageGenerator : IImageGenerator
             (byte)(unicolour.Rgb.G * 255),
             (byte)(unicolour.Rgb.B * 255),
             (byte)unicolour.Alpha.A255);
-    }
-
-    void AddNoise(SKCanvas canvas, int width, int height)
-    {
-        var random = new Random();
-        var noisePaint = new SKPaint { Color = SKColors.White.WithAlpha(20) };
-        for (int i = 0; i < 10000; i++)
-        {
-            canvas.DrawPoint(random.Next(width), random.Next(height), noisePaint);
-        }
     }
 
     public float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text, float degreeOfCertainty = 1f,

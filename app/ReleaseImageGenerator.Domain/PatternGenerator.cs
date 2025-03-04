@@ -55,12 +55,12 @@ public static class PatternGenerator
         // Subtle grid lines with very low opacity
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 7)),
             IsStroke = true,
             StrokeWidth = 1
         };
 
-        int spacing = random.Next(30, 60);
+        int spacing = Math.Max(10, random.Next((width / 100) * (height / 100) / 7, (width / 100) * (height / 100) / 3));
 
         // Draw vertical lines
         for (int x = 0; x < width; x += spacing)
@@ -80,20 +80,21 @@ public static class PatternGenerator
         // Create tiny dots with low opacity
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 11 + 12)),
             IsAntialias = true
         };
 
-        int spacing = random.Next(15, 45);
-        float dotSize = random.Next(1, 3);
+        int spacing = Math.Max(10, random.Next((width / 100) * (height / 100) / 8, (width / 100) * (height / 100) / 5));
+        float dotSize = Math.Max(1, random.Next((width / 140) * (height / 140) / 100, (width / 140) * (height / 140) / 40));
 
         for (int x = 0; x < width; x += spacing)
         {
             for (int y = 0; y < height; y += spacing)
             {
                 // Add slight randomness to position
-                float offsetX = (float)(random.NextDouble() * 5 - 2.5);
-                float offsetY = (float)(random.NextDouble() * 5 - 2.5);
+                float randomOffset = Math.Max(0, random.Next((width / 150) * (height / 150) / 50, (width / 150) * (height / 150) / 25));
+                float offsetX = (float)(randomOffset * 2 - randomOffset);
+                float offsetY = (float)(randomOffset * 2 - randomOffset);
 
                 canvas.DrawCircle(x + offsetX, y + offsetY, dotSize, paint);
             }
@@ -104,15 +105,15 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 9 + 8)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1
         };
 
-        int spacing = random.Next(40, 80);
-        int amplitude = random.Next(10, 30);
-        int frequency = random.Next(3, 6);
+        int spacing = Math.Max(10, random.Next((width / 100) * (height / 100) / 7, (width / 100) * (height / 100) / 3));
+        int amplitude = Math.Max(5, random.Next((width / 100) * (height / 100) / 14, (width / 100) * (height / 100) / 8));
+        int frequency = Math.Max(2, random.Next((width / 100) * (height / 100) / 30, (width / 100) * (height / 100) / 15));
 
         // Draw horizontal wavy lines
         for (int y = 0; y < height; y += spacing)
@@ -150,24 +151,28 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(4) + lightness * 17 + 18)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1
         };
 
-        int spacing = random.Next(70, 140);
+        int shapeCount = Math.Max(10, random.Next((width / 140) * (height / 140) / 100, (width / 140) * (height / 140) / 50));
 
-        for (int x = 0; x < width; x += spacing)
+        // Calculate the optimal spacing based on the shape count and canvas size
+        int spacing = width / shapeCount;
+
+        for (int x = spacing / 4; x < width; x += spacing)
         {
-            for (int y = 0; y < height; y += spacing)
+            for (int y = spacing / 4; y < height; y += spacing)
             {
                 int shapeType = random.Next(3);
-                int size = random.Next(20, 40);
+                int size = Math.Max(10, random.Next(Math.Max(width, height) / 100, Math.Max(width, height) / 40));
 
                 // Add slight randomness to position
-                float offsetX = (float)(random.NextDouble() * 34 - 17);
-                float offsetY = (float)(random.NextDouble() * 34 - 17);
+                float randomOffset = Math.Max(0, random.Next(Math.Max(width, height) / 100, Math.Max(width, height) / 50));
+                float offsetX = (float)(randomOffset * 2 - randomOffset);
+                float offsetY = (float)(randomOffset * 2 - randomOffset);
 
                 switch (shapeType)
                 {
@@ -194,14 +199,14 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 11 + 8)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1
         };
 
         // Size of hexagons
-        int size = random.Next(40, 80);
+        int size = Math.Max(10, random.Next((width / 100) * (height / 100) / 3, (width / 100) * (height / 100) / 2));
         float h = (float)(size * Math.Sqrt(3) / 2); // Height of equilateral triangle
 
         // Offset rows to create hexagonal tiling
@@ -236,7 +241,7 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 8 + 10)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1
@@ -244,7 +249,7 @@ public static class PatternGenerator
 
         // Number of center points for concentric circles
         int numCenters = random.Next(1, 3);
-        int maxRadius = Math.Max(width, height) / 2;
+        int maxRadius = Math.Max(width, height);
 
         for (int i = 0; i < numCenters; i++)
         {
@@ -253,7 +258,7 @@ public static class PatternGenerator
             float centerY = random.Next(height);
 
             // Draw several concentric circles from each center
-            int numCircles = random.Next(3, 8);
+            int numCircles = Math.Max(2, random.Next((width / 100) * (height / 100) / 30, (width / 100) * (height / 100) / 8));
             float radiusStep = maxRadius / numCircles;
 
             for (int j = 1; j <= numCircles; j++)
@@ -268,14 +273,14 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 6 + 8)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1,
             PathEffect = SKPathEffect.CreateDash(new float[] { 2, 4 }, 0)
         };
 
-        int spacing = random.Next(30, 70);
+        int spacing = Math.Max(10, random.Next((width / 100) * (height / 100) / 7, (width / 100) * (height / 100) / 3));
         float angle1 = (float)(random.Next(30, 60) * Math.PI / 180); // Convert to radians
         float angle2 = angle1 + (float)(Math.PI / 2); // Perpendicular
 
@@ -309,14 +314,14 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)),
+            Color = SKColors.White.WithAlpha((byte)(random.Next(5) + lightness * 14 + 12)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 1
         };
 
-        int gridSize = random.Next(80, 160);
-        int lineChance = 70; // Percentage chance of drawing a line
+        int gridSize = Math.Max(10, random.Next((width / 100) * (height / 100) / 5, (width / 100) * (height / 100)));
+        int lineChance = random.Next(50, 90); // Percentage chance of drawing a line
 
         // Create a grid of nodes
         for (int x = gridSize; x < width; x += gridSize)
@@ -326,7 +331,8 @@ public static class PatternGenerator
                 // Sometimes draw a small node
                 if (random.Next(100) < 60)
                 {
-                    float nodeSize = random.Next(2, 5);
+                    float nodeSize = Math.Max(1,
+                        random.Next((width / 140) * (height / 140) / 50, (width / 140) * (height / 140) / 20));
                     canvas.DrawCircle(x, y, nodeSize, paint);
 
                     // Draw horizontal line to the right
@@ -385,18 +391,18 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)), // Slightly more visible
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 11 + 11)),
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 2 // Thicker lines
         };
 
         // Create a chess/steps pattern - decide on grid size
-        int gridSize = random.Next(30, 60);
+        int gridSize = Math.Max(10, random.Next((width / 100) * (height / 100) / 6, (width / 100) * (height / 100) / 3));
 
         // Determine how many grid cells we need in each dimension
-        int horizontalCells = width / gridSize + 1;
-        int verticalCells = height / gridSize + 1;
+        int horizontalCells = width / Math.Max(gridSize, 1) + 1;
+        int verticalCells = height / Math.Max(gridSize, 1) + 1;
 
         // Create the step pattern
         for (int i = 0; i < horizontalCells + verticalCells - 1; i++)
@@ -440,18 +446,18 @@ public static class PatternGenerator
     {
         var paint = new SKPaint
         {
-            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 10 + 8)), // Slightly more visible
+            Color = SKColors.White.WithAlpha((byte)(random.Next(3) + lightness * 7 + 9)), // Slightly more visible
             IsAntialias = true,
             IsStroke = true,
             StrokeWidth = 2 // Thicker lines
         };
 
         // Create a chess/steps pattern - decide on grid size
-        int gridSize = random.Next(30, 60);
+        int gridSize = Math.Max(10, random.Next((width / 100) * (height / 100) / 8, (width / 100) * (height / 100) / 3));
 
         // Determine how many grid cells we need in each dimension
-        int horizontalCells = width / gridSize + 1;
-        int verticalCells = height / gridSize + 1;
+        int horizontalCells = width / Math.Max(gridSize, 1) + 1;
+        int verticalCells = height / Math.Max(gridSize, 1) + 1;
         
         // Determine whether to go up or down
         bool goUp = random.Next(2) == 0;
