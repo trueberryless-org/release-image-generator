@@ -1,11 +1,14 @@
 ﻿using SkiaSharp;
+using Wacton.Unicolour;
 
 namespace ReleaseImageGenerator.Domain;
 
 public static class PatternGenerator
 {
-    public static void AddBackgroundPatterns(SKCanvas canvas, int width, int height, Random random, double lightness)
+    public static void GeneratePattern(SKCanvas canvas, int width, int height, Random random, Unicolour primaryColor)
     {
+        var lightness = primaryColor.Oklch.L;
+        
         // Choose a pattern type randomly
         int patternType = random.Next(10);
 

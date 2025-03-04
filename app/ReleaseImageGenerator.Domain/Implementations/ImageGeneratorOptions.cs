@@ -1,6 +1,6 @@
 ﻿namespace ReleaseImageGenerator.Domain.Implementations;
 
-public record ImageGeneratorOptions(string text, int width, int height, SupportedFonts font);
+public record ImageGeneratorOptions(string? text, int width, int height, SupportedFonts font);
 
 public enum SupportedFonts
 {

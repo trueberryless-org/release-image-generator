@@ -6,7 +6,7 @@ namespace ReleaseImageGenerator.Domain.Implementations;
 
 public class ImageGenerator : IImageGenerator
 {
-    public string Text { get; set; }
+    public string? Text { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
     public SupportedFonts Font { get; set; }
@@ -23,209 +23,18 @@ public class ImageGenerator : IImageGenerator
     {
         using var surface = SKSurface.Create(new SKImageInfo(Width, Height));
         var canvas = surface.Canvas;
-
         var random = new Random();
 
-        // Generate a harmonious color palette around the primary color
-        var primaryColor = ColorGenerator.GetRandomColor(ColorGenerator.ColorLimitation.NEUTRAL_LIGHTNESS,
-            ColorGenerator.ColorLimitation.NEUTRAL_SATURATION);
-
-        var colorPalette = ColorGenerator.GetRandomPalette(primaryColor, 8).Select(UnicolourToSKColor).ToArray();
-
-        var backgroundRotationIsClockwise = random.Next(2) == 0;
-
-        // Fill with a smooth gradient background based on the palette
-        var paint = new SKPaint
-        {
-            Shader = SKShader.CreateLinearGradient(
-                new SKPoint(0,
-                    random.Next(backgroundRotationIsClockwise ? -1000 : Height,
-                        backgroundRotationIsClockwise ? 0 : Height + 1000)),
-                new SKPoint(Width,
-                    random.Next(backgroundRotationIsClockwise ? Height : -1000,
-                        backgroundRotationIsClockwise ? Height + 1000 : 0)),
-                colorPalette,
-                SKShaderTileMode.Clamp
-            )
-        };
-
-        var colorPalette2 = ColorGenerator.GetRandomPalette(primaryColor, 6, 60, 0.3D).Select(UnicolourToSKColor)
-            .ToArray();
-        var paint2 = new SKPaint
-        {
-            Shader = SKShader.CreateLinearGradient(
-                new SKPoint(0,
-                    random.Next(!backgroundRotationIsClockwise ? -1000 : Height,
-                        !backgroundRotationIsClockwise ? 0 : Height + 1000)),
-                new SKPoint(Width,
-                    random.Next(!backgroundRotationIsClockwise ? Height : -1000,
-                        !backgroundRotationIsClockwise ? Height + 1000 : 0)),
-                colorPalette2,
-                SKShaderTileMode.Clamp
-            )
-        };
-
-        var colorPalette3 = ColorGenerator.GetRandomPalette(primaryColor, 3, 50, 0.2D).Select(UnicolourToSKColor)
-            .ToArray();
-        var paint3 = new SKPaint
-        {
-            Shader = SKShader.CreateRadialGradient(
-                new SKPoint(Width / 2, Height / 2),
-                (float)Math.Sqrt(Math.Pow(Width, 2) + Math.Pow(Height, 2)) / 2,
-                colorPalette3,
-                SKShaderTileMode.Clamp
-            )
-        };
-        canvas.DrawRect(0, 0, Width, Height, paint);
-        canvas.DrawRect(0, 0, Width, Height, paint2);
-        canvas.DrawRect(0, 0, Width, Height, paint3);
-
-        // Add some pattern
-        PatternGenerator.AddBackgroundPatterns(canvas, Width, Height, random, primaryColor.Oklch.L);
-        
-        // Add some noise
-        NoiseGenerator.AddNoise(canvas, Width, Height);
-
-        // Load JetBrains Mono font
-        var typeface = Font switch
-        {
-            SupportedFonts.READEX_BOLD => SKTypeface.FromFile("./fonts/ReadexPro-Bold.ttf"),
-            SupportedFonts.READEX_MEDIUM => SKTypeface.FromFile("./fonts/ReadexPro-Medium.ttf"),
-            SupportedFonts.READEX_LIGHT => SKTypeface.FromFile("./fonts/ReadexPro-Light.ttf"),
-            SupportedFonts.JETBRAINS_BOLD => SKTypeface.FromFile("./fonts/JetbrainsMono-Bold.ttf"),
-            SupportedFonts.JETBRAINS_MEDIUM => SKTypeface.FromFile("./fonts/JetbrainsMono-Medium.ttf"),
-            SupportedFonts.JETBRAINS_LIGHT => SKTypeface.FromFile("./fonts/JetbrainsMono-Light.ttf"),
-            SupportedFonts.SOURCE_CODE_BOLD => SKTypeface.FromFile("./fonts/SourceCodePro-Bold.ttf"),
-            SupportedFonts.SOURCE_CODE_MEDIUM => SKTypeface.FromFile("./fonts/SourceCodePro-Medium.ttf"),
-            SupportedFonts.SOURCE_CODE_LIGHT => SKTypeface.FromFile("./fonts/SourceCodePro-Light.ttf"),
-            _ => SKTypeface.Default
-        };
-        var fontsize = GetMaxFontSize(Width - Width / 3, typeface, Text, 1f, Width > Height ? Height / 3 : Width / 3);
-
-        // Calculate text size and position
-        var textPaint = new SKPaint
-        {
-            TextSize = fontsize,
-            IsAntialias = true,
-            Typeface = typeface,
-            TextScaleX = 0.95f
-        };
-
-        var textWidth = textPaint.MeasureText(Text);
-        var textBounds = new SKRect();
-        textPaint.MeasureText(Text, ref textBounds);
-
-        float textX = (Width - textWidth) / 2;
-        float textY = Height / 2 + textBounds.Height / 2;
-        
-        // Add light text shadow
-        var textShadowPaint = new SKPaint
-        {
-            TextSize = fontsize,
-            IsAntialias = true,
-            Typeface = typeface,
-            TextScaleX = 0.95f,
-            Color = SKColors.Black.WithAlpha(80),
-            MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 5)
-        };
-        canvas.DrawText(Text, textX + fontsize / 100, textY + fontsize / 100, textShadowPaint);
-
-        // Now set up the gradient with proper positioning
-        textPaint.Shader = SKShader.CreateLinearGradient(
-            new SKPoint(textX, textY + textBounds.Top),
-            new SKPoint(textX + textWidth, textY + textBounds.Bottom),
-            new[] { SKColors.White, UnicolourToSKColor(new Unicolour(ColourSpace.Oklch, (0.8 + Math.Max(0, (primaryColor.Oklch.L - 0.8) * 0.5), 0, 0), 1D)) },
-            SKShaderTileMode.Clamp
-        );
-
-        // Draw glassmorphism background with smaller border and shadow
-        var bgPaint = new SKPaint
-        {
-            Color = SKColors.White.WithAlpha(40),
-            IsAntialias = true
-        };
-        var borderPaint = new SKPaint
-        {
-            Color = SKColors.White.WithAlpha(80),
-            IsStroke = true,
-            StrokeWidth = 4,
-            IsAntialias = true
-        };
-
-        var shadowPaint = new SKPaint
-        {
-            Color = SKColors.Black.WithAlpha(50),
-            MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 10)
-        };
-
-        var padding = fontsize / 3;
-        var rect = new SKRect(textX - padding, textY + textBounds.Top - padding, textX + textWidth + padding,
-            textY + padding);
-
-        // Draw shadow in the direction of the light
-        canvas.Translate(fontsize / 50, fontsize / 50);
-        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, shadowPaint);
-        canvas.Translate(-fontsize / 50, -fontsize / 50);
-
-        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, bgPaint);
-        canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, borderPaint);
-        
-
-
-        // Draw the text
-        canvas.DrawText(Text, textX, textY, textPaint);
+        var primaryColor = BackgroundGenerator.GenerateBackground(canvas, Width, Height, random);
+        PatternGenerator.GeneratePattern(canvas, Width, Height, random, primaryColor);
+        NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
+        if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, Font, primaryColor);
 
         // Return as JPEG
         var stream = new MemoryStream();
         using var image = surface.Snapshot();
-        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
         data.SaveTo(stream);
         return stream;
-    }
-
-    SKColor UnicolourToSKColor(Unicolour unicolour)
-    {
-        return new SKColor(
-            (byte)(unicolour.Rgb.R * 255),
-            (byte)(unicolour.Rgb.G * 255),
-            (byte)(unicolour.Rgb.B * 255),
-            (byte)unicolour.Alpha.A255);
-    }
-
-    public float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text, float degreeOfCertainty = 1f,
-        float maxFont = 100f)
-    {
-        var max = maxFont; // The upper bound. We know the font size is below this value
-        var min = 0f; // The lower bound, We know the font size is equal to or above this value
-        var last = -1f; // The last calculated value.
-        float value;
-        while (true)
-        {
-            value = min + ((max - min) / 2); // Find the half way point between Max and Min
-            using (SKFont ft = new SKFont(typeface, value))
-            using (SKPaint paint = new SKPaint(ft))
-            {
-                if (paint.MeasureText(text) > sectorSize) // Measure the string size at this font size
-                {
-                    // The text size is too large
-                    // therefore the max possible size is below value
-                    last = value;
-                    max = value;
-                }
-                else
-                {
-                    // The text fits within the area
-                    // therefore the min size is above or equal to value
-                    min = value;
-
-                    // Check if this value is within our degree of certainty
-                    if (Math.Abs(last - value) <= degreeOfCertainty)
-                        return last; // Value is within certainty range, we found the best font size!
-
-                    //This font difference is not within our degree of certainty
-                    last = value;
-                }
-            }
-        }
     }
 }

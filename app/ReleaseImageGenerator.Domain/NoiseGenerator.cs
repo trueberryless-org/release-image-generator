@@ -4,9 +4,8 @@ namespace ReleaseImageGenerator.Domain;
 
 public static class NoiseGenerator
 {
-    public static void AddNoise(SKCanvas canvas, int width, int height)
+    public static void GenerateNoise(SKCanvas canvas, int width, int height, Random random)
     {
-        var random = new Random();
         int noiseWidth = width / (random.Next(5) + 7);
         int noiseHeight = height / (random.Next(5) + 7);
 

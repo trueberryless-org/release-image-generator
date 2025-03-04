@@ -1,4 +1,5 @@
-﻿using Wacton.Unicolour;
+﻿using SkiaSharp;
+using Wacton.Unicolour;
 
 namespace ReleaseImageGenerator.Domain;
 
@@ -64,4 +65,14 @@ public static class ColorGenerator
         GetRandomPalette(GetRandomColor(), numberOfColors);
 
     public static Unicolour[] GetRandomPalette() => GetRandomPalette(GetRandomColor());
+    
+
+    public static SKColor UnicolourToSKColor(Unicolour unicolour)
+    {
+        return new SKColor(
+            (byte)(unicolour.Rgb.R * 255),
+            (byte)(unicolour.Rgb.G * 255),
+            (byte)(unicolour.Rgb.B * 255),
+            (byte)unicolour.Alpha.A255);
+    }
 }
