@@ -1,5 +1,11 @@
 # release-image-generator
 
+## 0.2.1
+
+### Patch Changes
+
+- [`3ed3343`](https://github.com/trueberryless-org/release-image-generator/commit/3ed33432a3d9a18fd75c5a29e16cf507ed5e5287) Thanks [@trueberryless](https://github.com/trueberryless)! - Try making font loader more secure (because fonts are not working)
+
 ## 0.2.0
 
 ### Minor Changes
