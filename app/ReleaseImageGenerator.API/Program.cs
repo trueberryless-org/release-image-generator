@@ -20,13 +20,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", (string? text, int? width, int? height, SupportedFonts? font) =>
-    {
-        var options = new ImageGeneratorOptions(text, width ?? 1920, height ?? 1080, font ?? SupportedFonts.READEX_BOLD);
-        var imageGenerator = new ImageGenerator(options);
-        return Results.File(imageGenerator.GenerateImage().ToArray(), "image/png");
-    })
-.WithName("ImageGenerator")
-.WithOpenApi();
+app.MapGet("/",
+        (string? text, int? width, int? height, SupportedFontFamily? fontFamily, SupportedFontWeight? fontWeight) =>
+        {
+            var options = new ImageGeneratorOptions(text, width ?? 1920, height ?? 1080,
+                fontFamily ?? SupportedFontFamily.readexpro, fontWeight ?? SupportedFontWeight.bold);
+            var imageGenerator = new ImageGenerator(options);
+            return Results.File(imageGenerator.GenerateImage().ToArray(), "image/png");
+        })
+    .WithName("ImageGenerator")
+    .WithOpenApi();
 
 app.Run();

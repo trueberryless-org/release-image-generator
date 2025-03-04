@@ -1,16 +1,27 @@
 ﻿namespace ReleaseImageGenerator.Domain.Implementations;
 
-public record ImageGeneratorOptions(string? text, int width, int height, SupportedFonts font);
+public record ImageGeneratorOptions(string? text, int width, int height, SupportedFontFamily fontFamily, SupportedFontWeight fontWeight);
 
-public enum SupportedFonts
+public enum SupportedFontFamily
 {
-    JETBRAINS_LIGHT,
-    JETBRAINS_MEDIUM,
-    JETBRAINS_BOLD,
-    READEX_LIGHT,
-    READEX_MEDIUM,
-    READEX_BOLD,
-    SOURCE_CODE_LIGHT,
-    SOURCE_CODE_MEDIUM,
-    SOURCE_CODE_BOLD,
+    bigshoulders,
+    inter,
+    jetbrainsmono,
+    lato,
+    opensans,
+    poppins,
+    quicksand,
+    raleway,
+    readexpro,
+    roboto,
+    robotomono,
+    rubik,
+    sourcecodepro
+}
+
+public enum SupportedFontWeight
+{
+    bold,
+    medium,
+    light
 }

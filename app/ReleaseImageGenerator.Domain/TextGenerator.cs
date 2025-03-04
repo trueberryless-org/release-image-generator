@@ -7,22 +7,9 @@ namespace ReleaseImageGenerator.Domain;
 
 public static class TextGenerator
 {
-    public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFonts font, Unicolour primaryColor)
+    public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFontFamily fontFamily, SupportedFontWeight fontWeight, Unicolour primaryColor)
     {
-        // Load JetBrains Mono font
-        var typeface = font switch
-        {
-            SupportedFonts.READEX_BOLD => SKTypeface.FromFile("./fonts/ReadexPro-Bold.ttf"),
-            SupportedFonts.READEX_MEDIUM => SKTypeface.FromFile("./fonts/ReadexPro-Medium.ttf"),
-            SupportedFonts.READEX_LIGHT => SKTypeface.FromFile("./fonts/ReadexPro-Light.ttf"),
-            SupportedFonts.JETBRAINS_BOLD => SKTypeface.FromFile("./fonts/JetbrainsMono-Bold.ttf"),
-            SupportedFonts.JETBRAINS_MEDIUM => SKTypeface.FromFile("./fonts/JetbrainsMono-Medium.ttf"),
-            SupportedFonts.JETBRAINS_LIGHT => SKTypeface.FromFile("./fonts/JetbrainsMono-Light.ttf"),
-            SupportedFonts.SOURCE_CODE_BOLD => SKTypeface.FromFile("./fonts/SourceCodePro-Bold.ttf"),
-            SupportedFonts.SOURCE_CODE_MEDIUM => SKTypeface.FromFile("./fonts/SourceCodePro-Medium.ttf"),
-            SupportedFonts.SOURCE_CODE_LIGHT => SKTypeface.FromFile("./fonts/SourceCodePro-Light.ttf"),
-            _ => SKTypeface.Default
-        };
+        var typeface = SKTypeface.FromFile($"./fonts/{fontFamily.ToString()}-{fontWeight.ToString()}.ttf") ?? SKTypeface.FromFile($"./fonts/readexpro-bold.ttf") ?? SKTypeface.Default;
         var fontsize = GetMaxFontSize(width - width / 3, typeface, text, 1f, width > height ? height / 3 : width / 3);
 
         // Calculate text size and position

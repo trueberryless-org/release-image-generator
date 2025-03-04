@@ -9,14 +9,16 @@ public class ImageGenerator : IImageGenerator
     public string? Text { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
-    public SupportedFonts Font { get; set; }
+    public SupportedFontFamily FontFamily { get; set; }
+    public SupportedFontWeight FontWeight { get; set; }
 
     public ImageGenerator(ImageGeneratorOptions options)
     {
         Text = options.text;
         Width = options.width;
         Height = options.height;
-        Font = options.font;
+        FontFamily = options.fontFamily;
+        FontWeight = options.fontWeight;
     }
 
     public MemoryStream GenerateImage()
@@ -28,7 +30,7 @@ public class ImageGenerator : IImageGenerator
         var primaryColor = BackgroundGenerator.GenerateBackground(canvas, Width, Height, random);
         PatternGenerator.GeneratePattern(canvas, Width, Height, random, primaryColor);
         NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
-        if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, Font, primaryColor);
+        if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor);
 
         // Return as JPEG
         var stream = new MemoryStream();
