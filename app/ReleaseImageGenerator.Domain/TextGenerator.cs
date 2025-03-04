@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Reflection;
 using ReleaseImageGenerator.Domain.Implementations;
 using SkiaSharp;
 using Wacton.Unicolour;
@@ -7,9 +8,10 @@ namespace ReleaseImageGenerator.Domain;
 
 public static class TextGenerator
 {
-    public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFontFamily fontFamily, SupportedFontWeight fontWeight, Unicolour primaryColor)
+    public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFontFamily fontFamily,
+        SupportedFontWeight fontWeight, Unicolour primaryColor)
     {
-        var typeface = SKTypeface.FromFile($"./fonts/{fontFamily.ToString()}-{fontWeight.ToString()}.ttf") ?? SKTypeface.FromFile($"./fonts/readexpro-bold.ttf") ?? SKTypeface.Default;
+        var typeface = LoadFont(fontFamily.ToString(), fontWeight.ToString());
         var fontsize = GetMaxFontSize(width - width / 3, typeface, text, 1f, width > height ? height / 3 : width / 3);
 
         // Calculate text size and position
@@ -27,7 +29,7 @@ public static class TextGenerator
 
         float textX = (width - textwidth) / 2;
         float textY = height / 2 + textBounds.Height / 2;
-        
+
         // Add light text shadow
         var textShadowPaint = new SKPaint
         {
@@ -44,7 +46,12 @@ public static class TextGenerator
         textPaint.Shader = SKShader.CreateLinearGradient(
             new SKPoint(textX, textY + textBounds.Top),
             new SKPoint(textX + textwidth, textY + textBounds.Bottom),
-            new[] { SKColors.White, ColorGenerator.UnicolourToSKColor(new Unicolour(ColourSpace.Oklch, (0.8 + Math.Max(0, (primaryColor.Oklch.L - 0.8) * 0.5), 0, 0), 1D)) },
+            new[]
+            {
+                SKColors.White,
+                ColorGenerator.UnicolourToSKColor(new Unicolour(ColourSpace.Oklch,
+                    (0.8 + Math.Max(0, (primaryColor.Oklch.L - 0.8) * 0.5), 0, 0), 1D))
+            },
             SKShaderTileMode.Clamp
         );
 
@@ -79,12 +86,31 @@ public static class TextGenerator
 
         canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, bgPaint);
         canvas.DrawRoundRect(rect, fontsize / 4, fontsize / 4, borderPaint);
-        
+
         // Draw the text
         canvas.DrawText(text, textX, textY, textPaint);
     }
-    
-    private static float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text, float degreeOfCertainty = 1f,
+
+    private static SKTypeface LoadFont(string fontFamily, string fontWeight)
+    {
+        var fontName = $"{fontFamily}-{fontWeight}.ttf";
+        var resourceName = $"YourNamespace.Resources.{fontName}";
+
+        using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        {
+            if (stream != null)
+            {
+                return SKTypeface.FromStream(stream);
+            }
+        }
+
+        // Fallback to a default font if not found
+        return SKTypeface.FromFile($"./fonts/{fontFamily}-{fontWeight}.ttf") ??
+               SKTypeface.FromFile($"./fonts/readexpro-bold.ttf") ?? SKTypeface.Default;
+    }
+
+    private static float GetMaxFontSize(double sectorSize, SKTypeface typeface, string text,
+        float degreeOfCertainty = 1f,
         float maxFont = 100f)
     {
         var max = maxFont; // The upper bound. We know the font size is below this value
