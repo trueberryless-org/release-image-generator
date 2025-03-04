@@ -82,7 +82,7 @@ public class ImageGenerator : IImageGenerator
 
         // Add some noise
         AddNoise(canvas, Width, Height);
-        
+
         // Add some pattern
         PatternGenerator.AddBackgroundPatterns(canvas, Width, Height, random, primaryColor.Oklch.L);
 
@@ -103,21 +103,40 @@ public class ImageGenerator : IImageGenerator
         var fontsize = GetMaxFontSize(Width - Width / 3, typeface, Text, 1f, Width > Height ? Height / 3 : Width / 3);
 
         // Calculate text size and position
-        paint = new SKPaint
+        var textPaint = new SKPaint
         {
-            Color = SKColors.White,
             TextSize = fontsize,
             IsAntialias = true,
             Typeface = typeface,
             TextScaleX = 0.95f
         };
 
-        var textWidth = paint.MeasureText(Text);
+        var textWidth = textPaint.MeasureText(Text);
         var textBounds = new SKRect();
-        paint.MeasureText(Text, ref textBounds);
+        textPaint.MeasureText(Text, ref textBounds);
 
         float textX = (Width - textWidth) / 2;
         float textY = Height / 2 + textBounds.Height / 2;
+        
+        // Add light text shadow
+        var textShadowPaint = new SKPaint
+        {
+            TextSize = fontsize,
+            IsAntialias = true,
+            Typeface = typeface,
+            TextScaleX = 0.95f,
+            Color = SKColors.Black.WithAlpha(100),
+            MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 5)
+        };
+        canvas.DrawText(Text, textX + 3, textY + 3, textShadowPaint);
+
+        // Now set up the gradient with proper positioning
+        textPaint.Shader = SKShader.CreateLinearGradient(
+            new SKPoint(textX, textY + textBounds.Top),
+            new SKPoint(textX + textWidth, textY + textBounds.Bottom),
+            new[] { SKColors.White, UnicolourToSKColor(new Unicolour(ColourSpace.Oklch, (0.8, 0, 0), 1D)) },
+            SKShaderTileMode.Clamp
+        );
 
         // Draw glassmorphism background with smaller border and shadow
         var bgPaint = new SKPaint
@@ -152,7 +171,7 @@ public class ImageGenerator : IImageGenerator
         canvas.DrawRoundRect(rect, 50, 50, borderPaint);
 
         // Draw the text
-        canvas.DrawText(Text, textX, textY, paint);
+        canvas.DrawText(Text, textX, textY, textPaint);
 
         // Return as JPEG
         var stream = new MemoryStream();
@@ -217,6 +236,4 @@ public class ImageGenerator : IImageGenerator
             }
         }
     }
-
-    
 }
