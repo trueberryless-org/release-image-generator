@@ -4,5 +4,5 @@ namespace ReleaseImageGenerator.Domain.Interfaces;
 
 public interface IImageGenerator
 {
-    Tuple<MemoryStream, List<string>> GenerateImage();
+    MemoryStream GenerateImage();
 }

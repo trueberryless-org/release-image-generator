@@ -9,12 +9,10 @@ namespace ReleaseImageGenerator.Domain;
 public static class TextGenerator
 {
     public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFontFamily fontFamily,
-        SupportedFontWeight fontWeight, Unicolour primaryColor, List<string> logger)
+        SupportedFontWeight fontWeight, Unicolour primaryColor)
     {
-        var typeface = LoadFont(fontFamily.ToString(), fontWeight.ToString(), logger);
-        logger.Add("Family Name: " + typeface.FamilyName);
+        var typeface = LoadFont(fontFamily.ToString(), fontWeight.ToString());
         var fontsize = GetMaxFontSize(width - width / 3, typeface, text, 1f, width > height ? height / 3 : width / 3);
-        logger.Add("Font size: " + fontsize);
 
         // Calculate text size and position
         var textPaint = new SKPaint
@@ -93,10 +91,9 @@ public static class TextGenerator
         canvas.DrawText(text, textX, textY, textPaint);
     }
 
-    private static SKTypeface LoadFont(string fontFamily, string fontWeight, List<string> logger)
+    private static SKTypeface LoadFont(string fontFamily, string fontWeight)
     {
         var fontName = $"{fontFamily}-{fontWeight}.ttf";
-        logger.Add("File name: " + fontName);
 
         return SKTypeface.FromFile($"./fonts/{fontFamily}-{fontWeight}.ttf") ??
                SKTypeface.FromFile($"./fonts/readexpro-bold.ttf") ?? SKTypeface.Default;
