@@ -1,5 +1,11 @@
 # release-image-generator
 
+## 0.2.2
+
+### Patch Changes
+
+- [`3a26e9f`](https://github.com/trueberryless-org/release-image-generator/commit/3a26e9fe791627181247c1903127473da462b9e1) Thanks [@trueberryless](https://github.com/trueberryless)! - Fix fonts. Reason not working: Git + Windows did not track file rename to lowercase, so ttf files could not be found.
+
 ## 0.2.1
 
 ### Patch Changes
