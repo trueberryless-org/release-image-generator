@@ -5,12 +5,9 @@ namespace ReleaseImageGenerator.Domain;
 
 public static class BackgroundGenerator
 {
-    public static Unicolour GenerateBackground(SKCanvas canvas, int width, int height, Random random)
+    public static Unicolour GenerateBackground(SKCanvas canvas, int width, int height, Random random, Unicolour primaryColor)
     {
         // Generate a harmonious color palette around the primary color
-        var primaryColor = ColorGenerator.GetRandomColor(ColorGenerator.ColorLimitation.NEUTRAL_LIGHTNESS,
-            ColorGenerator.ColorLimitation.NEUTRAL_SATURATION);
-
         var colorPalette = ColorGenerator.GetRandomPalette(primaryColor, 8).Select(ColorGenerator.UnicolourToSKColor).ToArray();
 
         var backgroundRotationIsClockwise = random.Next(2) == 0;

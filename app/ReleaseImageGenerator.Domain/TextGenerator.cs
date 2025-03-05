@@ -9,10 +9,12 @@ namespace ReleaseImageGenerator.Domain;
 public static class TextGenerator
 {
     public static void GenerateText(SKCanvas canvas, string text, int width, int height, SupportedFontFamily fontFamily,
-        SupportedFontWeight fontWeight, Unicolour primaryColor)
+        SupportedFontWeight fontWeight, Unicolour primaryColor, List<string> logger)
     {
-        var typeface = LoadFont(fontFamily.ToString(), fontWeight.ToString());
+        var typeface = LoadFont(fontFamily.ToString(), fontWeight.ToString(), logger);
+        logger.Add("Family Name: " + typeface.FamilyName);
         var fontsize = GetMaxFontSize(width - width / 3, typeface, text, 1f, width > height ? height / 3 : width / 3);
+        logger.Add("Font size: " + fontsize);
 
         // Calculate text size and position
         var textPaint = new SKPaint
@@ -91,20 +93,11 @@ public static class TextGenerator
         canvas.DrawText(text, textX, textY, textPaint);
     }
 
-    private static SKTypeface LoadFont(string fontFamily, string fontWeight)
+    private static SKTypeface LoadFont(string fontFamily, string fontWeight, List<string> logger)
     {
         var fontName = $"{fontFamily}-{fontWeight}.ttf";
-        var resourceName = $"YourNamespace.Resources.{fontName}";
+        logger.Add("File name: " + fontName);
 
-        using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-        {
-            if (stream != null)
-            {
-                return SKTypeface.FromStream(stream);
-            }
-        }
-
-        // Fallback to a default font if not found
         return SKTypeface.FromFile($"./fonts/{fontFamily}-{fontWeight}.ttf") ??
                SKTypeface.FromFile($"./fonts/readexpro-bold.ttf") ?? SKTypeface.Default;
     }

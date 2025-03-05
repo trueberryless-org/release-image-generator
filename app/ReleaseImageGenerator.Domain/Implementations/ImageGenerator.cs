@@ -21,22 +21,25 @@ public class ImageGenerator : IImageGenerator
         FontWeight = options.fontWeight;
     }
 
-    public MemoryStream GenerateImage()
+    public Tuple<MemoryStream, List<string>> GenerateImage()
     {
+        List<string> logger = new List<string>();
         using var surface = SKSurface.Create(new SKImageInfo(Width, Height));
         var canvas = surface.Canvas;
         var random = new Random();
 
-        var primaryColor = BackgroundGenerator.GenerateBackground(canvas, Width, Height, random);
+        var primaryColor = ColorGenerator.GetRandomColor(ColorGenerator.ColorLimitation.NEUTRAL_LIGHTNESS,
+            ColorGenerator.ColorLimitation.NEUTRAL_SATURATION);
+        BackgroundGenerator.GenerateBackground(canvas, Width, Height, random, primaryColor);
         PatternGenerator.GeneratePattern(canvas, Width, Height, random, primaryColor);
         NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
-        if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor);
+        if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor, logger);
 
-        // Return as JPEG
+        // Return as PNG
         var stream = new MemoryStream();
         using var image = surface.Snapshot();
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
         data.SaveTo(stream);
-        return stream;
+        return new Tuple<MemoryStream, List<string>>(stream, logger);
     }
 }
