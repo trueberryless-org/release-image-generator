@@ -1,6 +1,4 @@
-﻿using ReleaseImageGenerator.Domain.Implementations;
-
-namespace ReleaseImageGenerator.Domain.Interfaces;
+﻿namespace ReleaseImageGenerator.Domain.Interfaces;
 
 public interface IImageGenerator
 {
