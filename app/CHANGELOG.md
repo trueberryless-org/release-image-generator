@@ -1,5 +1,11 @@
 # release-image-generator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#28](https://github.com/trueberryless-org/release-image-generator/pull/28) [`4931314`](https://github.com/trueberryless-org/release-image-generator/commit/493131472107230c647310948f7ad93caffa70b0) Thanks [@trueberryless](https://github.com/trueberryless)! - Add support for passing primary color
+
 ## 0.2.2
 
 ### Patch Changes
