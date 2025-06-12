@@ -19,10 +19,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("/",
-        (string? text, int? width, int? height, SupportedFontFamily? fontFamily, SupportedFontWeight? fontWeight) =>
+        (string? text, int? width, int? height, SupportedFontFamily? fontFamily, SupportedFontWeight? fontWeight, string? primaryColor) =>
         {
             var options = new ImageGeneratorOptions(text, width ?? 1920, height ?? 1080,
-                fontFamily ?? SupportedFontFamily.readexpro, fontWeight ?? SupportedFontWeight.bold);
+                fontFamily ?? SupportedFontFamily.readexpro, fontWeight ?? SupportedFontWeight.bold, primaryColor);
             var imageGenerator = new ImageGenerator(options);
             return Results.File(imageGenerator.GenerateImage().ToArray(), "image/png");
         })
