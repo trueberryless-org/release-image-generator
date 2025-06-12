@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: release-image-generator
-          image: "trueberryless/release-image-generator:0.2.2"
+          image: "trueberryless/release-image-generator:0.3.0"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
