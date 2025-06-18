@@ -40,7 +40,7 @@ public class ImageGenerator : IImageGenerator
         NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
         if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor);
 
-        // Return as PNG
+        // Encode and return image in the requested format
         var stream = new MemoryStream();
         using var image = surface.Snapshot();
         using var data = image.Encode(ImageFormat switch
