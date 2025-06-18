@@ -52,6 +52,7 @@ public class ImageGenerator : IImageGenerator
             _ => SKEncodedImageFormat.Png
         }, 100);
         data.SaveTo(stream);
+        stream.Position = 0;
         return stream;
     }
 }
