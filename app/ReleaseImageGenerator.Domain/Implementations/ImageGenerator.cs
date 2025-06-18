@@ -12,6 +12,7 @@ public class ImageGenerator : IImageGenerator
     public SupportedFontFamily FontFamily { get; set; }
     public SupportedFontWeight FontWeight { get; set; }
     public string? PrimaryColor { get; set; }
+    public SupportedImageFormat ImageFormat { get; set; }
 
     public ImageGenerator(ImageGeneratorOptions options)
     {
@@ -21,6 +22,7 @@ public class ImageGenerator : IImageGenerator
         FontFamily = options.fontFamily;
         FontWeight = options.fontWeight;
         PrimaryColor = options.primaryColor;
+        ImageFormat = options.imageFormat;
     }
 
     public MemoryStream GenerateImage()
@@ -38,11 +40,19 @@ public class ImageGenerator : IImageGenerator
         NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
         if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor);
 
-        // Return as PNG
+        // Encode and return image in the requested format
         var stream = new MemoryStream();
         using var image = surface.Snapshot();
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var data = image.Encode(ImageFormat switch
+        {
+            SupportedImageFormat.jpeg => SKEncodedImageFormat.Jpeg,
+            SupportedImageFormat.jpg => SKEncodedImageFormat.Jpeg,
+            SupportedImageFormat.png => SKEncodedImageFormat.Png,
+            SupportedImageFormat.webp => SKEncodedImageFormat.Webp,
+            _ => SKEncodedImageFormat.Png
+        }, 100);
         data.SaveTo(stream);
+        stream.Position = 0;
         return stream;
     }
 }
