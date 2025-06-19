@@ -1,55 +1,49 @@
-﻿using SkiaSharp;
+﻿using ReleaseImageGenerator.Domain.Implementations;
+using SkiaSharp;
 using Wacton.Unicolour;
 
 namespace ReleaseImageGenerator.Domain;
 
 public static class PatternGenerator
 {
-    public static void GeneratePattern(SKCanvas canvas, int width, int height, Random random, Unicolour primaryColor)
+    public static void GeneratePattern(SKCanvas canvas, int width, int height, Random random, Unicolour primaryColor, SupportedPatternType? patternType)
     {
         var lightness = primaryColor.Oklch.L;
         
-        // Choose a pattern type randomly
-        int patternType = random.Next(10);
+        // Choose a pattern type randomly (except geometry pattern) if not defined by user
+        var selectedPattern = patternType ?? (SupportedPatternType)random.Next(Enum.GetValues(typeof(SupportedPatternType)).Length - 1);
 
-        switch (patternType)
+        switch (selectedPattern)
         {
-            case 0:
-                // Subtle grid pattern
+            case SupportedPatternType.grid:
                 DrawGridPattern(canvas, width, height, random, lightness);
                 break;
-            case 1:
-                // Dotted pattern
+            case SupportedPatternType.dots:
                 DrawDottedPattern(canvas, width, height, random, lightness);
                 break;
-            case 2:
-                // Wavy lines pattern
+            case SupportedPatternType.waves:
                 DrawWavyPattern(canvas, width, height, random, lightness);
                 break;
-            case 3:
-                // Geometric shapes
+            case SupportedPatternType.geometry:
                 DrawGeometricPattern(canvas, width, height, random, lightness);
                 break;
-            case 4:
-                // Hexagonal grid
+            case SupportedPatternType.hexagons:
                 DrawHexagonalPattern(canvas, width, height, random, lightness);
                 break;
-            case 5:
-                // Concentric circles
+            case SupportedPatternType.concentric:
                 DrawConcentricPattern(canvas, width, height, random, lightness);
                 break;
-            case 6:
-                // Circuit board pattern
+            case SupportedPatternType.circuitry:
                 DrawCircuitPattern(canvas, width, height, random, lightness);
                 break;
-            case 7:
-                // Maze pattern
+            case SupportedPatternType.maze:
                 DrawMazePattern(canvas, width, height, random, lightness);
                 break;
-            case 8:
-                // Steps pattern
+            case SupportedPatternType.steps:
                 DrawStepsPattern(canvas, width, height, random, lightness);
                 break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 

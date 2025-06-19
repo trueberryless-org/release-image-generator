@@ -20,11 +20,11 @@ app.UseHttpsRedirection();
 
 app.MapGet("/",
         (string? text, int? width, int? height, SupportedFontFamily? fontFamily, SupportedFontWeight? fontWeight,
-            string? primaryColor, SupportedImageFormat? imageFormat) =>
+            string? primaryColor, SupportedImageFormat? imageFormat, SupportedPatternType? backgroundPatternType) =>
         {
             var options = new ImageGeneratorOptions(text, width ?? 1920, height ?? 1080,
                 fontFamily ?? SupportedFontFamily.readexpro, fontWeight ?? SupportedFontWeight.bold, primaryColor,
-                imageFormat ?? SupportedImageFormat.png);
+                imageFormat ?? SupportedImageFormat.png, backgroundPatternType);
             var imageGenerator = new ImageGenerator(options);
             return Results.File(imageGenerator.GenerateImage().ToArray(), imageFormat switch
             {
