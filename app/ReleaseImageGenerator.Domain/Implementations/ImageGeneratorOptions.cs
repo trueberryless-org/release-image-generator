@@ -1,6 +1,14 @@
 ﻿namespace ReleaseImageGenerator.Domain.Implementations;
 
-public record ImageGeneratorOptions(string? text, int width, int height, SupportedFontFamily fontFamily, SupportedFontWeight fontWeight, string? primaryColor, SupportedImageFormat imageFormat);
+public record ImageGeneratorOptions(
+    string? text,
+    int width,
+    int height,
+    SupportedFontFamily fontFamily,
+    SupportedFontWeight fontWeight,
+    string? primaryColor,
+    SupportedImageFormat imageFormat,
+    SupportedPatternType? patternType);
 
 public enum SupportedFontFamily
 {
@@ -32,4 +40,17 @@ public enum SupportedImageFormat
     jpg,
     png,
     webp
+}
+
+public enum SupportedPatternType
+{
+    grid,
+    dots,
+    waves,
+    hexagons,
+    concentric,
+    circuitry,
+    maze,
+    steps,
+    geometry
 }

@@ -13,6 +13,7 @@ public class ImageGenerator : IImageGenerator
     public SupportedFontWeight FontWeight { get; set; }
     public string? PrimaryColor { get; set; }
     public SupportedImageFormat ImageFormat { get; set; }
+    public SupportedPatternType? PatternType { get; set; }
 
     public ImageGenerator(ImageGeneratorOptions options)
     {
@@ -23,6 +24,7 @@ public class ImageGenerator : IImageGenerator
         FontWeight = options.fontWeight;
         PrimaryColor = options.primaryColor;
         ImageFormat = options.imageFormat;
+        PatternType = options.patternType;
     }
 
     public MemoryStream GenerateImage()
@@ -36,7 +38,7 @@ public class ImageGenerator : IImageGenerator
             : ColorGenerator.GetRandomColor(ColorGenerator.ColorLimitation.NEUTRAL_LIGHTNESS,
                 ColorGenerator.ColorLimitation.NEUTRAL_SATURATION);
         BackgroundGenerator.GenerateBackground(canvas, Width, Height, random, primaryColor);
-        PatternGenerator.GeneratePattern(canvas, Width, Height, random, primaryColor);
+        PatternGenerator.GeneratePattern(canvas, Width, Height, random, primaryColor, PatternType);
         NoiseGenerator.GenerateNoise(canvas, Width, Height, random);
         if (Text != null) TextGenerator.GenerateText(canvas, Text, Width, Height, FontFamily, FontWeight, primaryColor);
 

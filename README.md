@@ -12,7 +12,20 @@ Get your random default image from [https://release-image-generator.trueberryles
   - `png` (default)
   - `jpg` / `jpeg`
   - `webp`
-  
+
+- **backgroundPatternType**: Define what background pattern to use (default: random): [https://release-image-generator.trueberryless.org?text=1.0&backgroundPatternType=steps](https://release-image-generator.trueberryless.org?text=1.0&backgroundPatternType=steps)
+
+  Background Pattern Options:
+
+  - `circuitry`
+  - `concentric`
+  - `dots`
+  - `geometry`
+  - `grid`
+  - `hexagons`
+  - `maze`
+  - `steps`
+  - `waves`
 - **fontFamily** & **fontWeight**: Configure the font family and weight used: [https://release-image-generator.trueberryless.org?text=1.0&fontFamily=jetbrainsmono&fontWeight=bold](https://release-image-generator.trueberryless.org?text=1.0&fontFamily=jetbrainsmono&fontWeight=bold)
 
   Family Options:
