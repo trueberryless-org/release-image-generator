@@ -1,5 +1,13 @@
 # release-image-generator
 
+## 0.4.0
+
+### Minor Changes
+
+- [#34](https://github.com/trueberryless-org/release-image-generator/pull/34) [`e3143d4`](https://github.com/trueberryless-org/release-image-generator/commit/e3143d4d8c3427bec15ae3265abcc71b3f85c6e5) Thanks [@trueberryless](https://github.com/trueberryless)! - Add support for choosing the background pattern type. Support patterns: circuitry, concentric, dots, geometry, grid, hexagons, maze, steps, and waves. Read more in [the docs](https://github.com/trueberryless-org/release-image-generator#usage).
+
+- [#32](https://github.com/trueberryless-org/release-image-generator/pull/32) [`8b2cc81`](https://github.com/trueberryless-org/release-image-generator/commit/8b2cc81b15967d43ef806ed9b6d4c00fc934323e) Thanks [@trueberryless](https://github.com/trueberryless)! - Add support for different image formats. Support formats: png, jpg and webp. Read more in [the docs](https://github.com/trueberryless-org/release-image-generator#usage).
+
 ## 0.3.0
 
 ### Minor Changes
