@@ -45,6 +45,8 @@ This project generates random images with customizable patterns, colors, and tex
 
 ### Example Requests
 
+Here are some example requests, you can also try out configuring your desired image on https://release-image-generator.trueberryless.org.
+
 **Simple image with text:**
 
 https://release-image-generator.trueberryless.org/api/generateImage?text=Hello+World
