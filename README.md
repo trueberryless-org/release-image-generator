@@ -66,4 +66,5 @@ https://release-image-generator.trueberryless.org/api/generateImage?text=Banner&
 ## License
 
 Licensed under the MIT license, Copyright © trueberryless.
+
 See [LICENSE](/LICENSE) for more information.
