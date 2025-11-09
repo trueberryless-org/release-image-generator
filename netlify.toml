@@ -1,3 +1,3 @@
 [build]
-  command = "npm install && npm run build"
+  command = "pnpm install && cd node_modules/canvas && npm run install && cd ../../ && pnpm run build"
   publish = "dist"
