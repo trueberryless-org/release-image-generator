@@ -24,7 +24,6 @@ export enum SupportedImageFormat {
   jpeg = "jpeg",
   jpg = "jpg",
   png = "png",
-  webp = "webp",
 }
 
 export enum SupportedPatternType {

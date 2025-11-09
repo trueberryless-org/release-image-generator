@@ -57,6 +57,12 @@ export const GET: APIRoute = async ({ url }) => {
     return new Response("Invalid patternType", { status: 400 });
   }
 
+  const parsedSeed =
+    params.get("seed") != null ? parseInt(params.get("seed")!, 10) : undefined;
+  const seed = Number.isFinite(parsedSeed)
+    ? Math.max(0, Math.min(9007199254740990, parsedSeed!))
+    : undefined;
+
   // Parse query parameters with defaults
   const options: ImageGeneratorOptions = {
     text: params.get("text") ?? undefined,
@@ -74,10 +80,7 @@ export const GET: APIRoute = async ({ url }) => {
     imageFormat,
     patternType,
     noiseLevel,
-    seed:
-      params.get("seed") != null
-        ? Math.max(0, Math.min(9007199254740990, parseInt(params.get("seed")!)))
-        : undefined,
+    seed: seed,
   };
 
   try {
@@ -88,14 +91,16 @@ export const GET: APIRoute = async ({ url }) => {
     const contentType =
       options.imageFormat === "jpeg" || options.imageFormat === "jpg"
         ? "image/jpeg"
-        : options.imageFormat === "webp"
-          ? "image/webp"
-          : "image/png";
+        : "image/png";
+
+    const cacheControl = options.seed
+      ? "public, max-age=86400, immutable"
+      : "public, max-age=0";
 
     return new Response(imageBuffer, {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=0",
+        "Cache-Control": cacheControl,
       },
     });
   } catch (error) {

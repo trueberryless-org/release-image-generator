@@ -11,12 +11,12 @@ This project generates random images with customizable patterns, colors, and tex
 | Parameter | Type | Default | Options |
 |-----------|------|---------|---------|
 | `text` | string | none | Any text to display |
-| `width` | number | 1200 | Any positive integer |
-| `height` | number | 630 | Any positive integer |
+| `width` | number | 1920 | Any positive integer |
+| `height` | number | 1080 | Any positive integer |
 | `fontFamily` | string | readexpro | See supported fonts below |
 | `fontWeight` | string | bold | bold, medium, light |
 | `primaryColor` | string | random | Any valid CSS color or hex |
-| `imageFormat` | string | png | png, jpg, jpeg, webp |
+| `imageFormat` | string | png | png, jpg, jpeg |
 | `patternType` | string | random | grid, dots, waves, triangles, hexagons, concentric, circuitry, maze, steps, geometry |
 | `noiseLevel` | string | medium | low, medium, high |
 | `seed` | number | `Date.now()` | Any positive integer |

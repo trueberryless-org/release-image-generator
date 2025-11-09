@@ -249,8 +249,8 @@ export class PatternGenerator {
           ) +
             Math.max(width, height) / 100
         );
-        const offsetX = randomOffset * 2 - randomOffset;
-        const offsetY = randomOffset * 2 - randomOffset;
+        const offsetX = random() * randomOffset * 2 - randomOffset;
+        const offsetY = random() * randomOffset * 2 - randomOffset;
 
         ctx.beginPath();
         switch (shapeType) {

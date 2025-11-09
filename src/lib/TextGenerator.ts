@@ -7,6 +7,9 @@ import type { Color } from "./types";
 import { SupportedFontFamily, SupportedFontWeight } from "./types";
 
 export class TextGenerator {
+  private static loadedFonts = new Set<string>();
+  private static readonly TEXT_SCALE_FACTOR = 0.95;
+
   static generateText(
     ctx: CanvasRenderingContext2D,
     text: string,
@@ -36,7 +39,7 @@ export class TextGenerator {
 
     // Measure text
     const metrics = ctx.measureText(text);
-    const textWidth = metrics.width * 0.95; // Apply text scale
+    const textWidth = metrics.width * this.TEXT_SCALE_FACTOR;
     const textHeight =
       metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
@@ -111,14 +114,20 @@ export class TextGenerator {
     fontFamily: SupportedFontFamily,
     fontWeight: SupportedFontWeight
   ): void {
+    const fontKey = `${fontFamily}-${fontWeight}`;
+    if (this.loadedFonts.has(fontKey)) {
+      return;
+    }
+
     try {
       const fontPath = path.join(
         process.cwd(),
         "public",
         "fonts",
-        `${fontFamily}-${fontWeight}.ttf`
+        `${fontKey}.ttf`
       );
       registerFont(fontPath, { family: fontFamily, weight: fontWeight });
+      this.loadedFonts.add(fontKey);
     } catch (error) {
       // Fallback to default font if loading fails
       console.warn(
@@ -143,7 +152,7 @@ export class TextGenerator {
     while (Math.abs(last - current) > 1) {
       ctx.font = `${current}px "${fontFamily}"`;
       const metrics = ctx.measureText(text);
-      const width = metrics.width * 0.95;
+      const width = metrics.width * this.TEXT_SCALE_FACTOR;
 
       if (width > maxWidth) {
         max = current;

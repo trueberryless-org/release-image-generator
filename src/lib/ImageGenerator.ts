@@ -86,9 +86,6 @@ export class ImageGenerator {
       case SupportedImageFormat.jpg:
         mimeType = "image/jpeg";
         break;
-      case SupportedImageFormat.webp:
-        mimeType = "image/webp";
-        break;
       default:
         mimeType = "image/png";
     }
