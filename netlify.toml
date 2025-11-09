@@ -1,3 +1,3 @@
 [build]
-  command = "pnpm install && pnpm rebuild canvas && pnpm run build"
+  command = "npm install && npm run build"
   publish = "dist"
