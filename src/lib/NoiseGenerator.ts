@@ -11,8 +11,14 @@ export class NoiseGenerator {
     noiseLevel: NoiseLevel,
     random: () => number
   ): void {
-    const noiseWidth = Math.floor(width / (Math.floor(random() * 5) + 7));
-    const noiseHeight = Math.floor(height / (Math.floor(random() * 5) + 7));
+    const noiseWidth = Math.max(
+      1,
+      Math.floor(width / (Math.floor(random() * 5) + 7))
+    );
+    const noiseHeight = Math.max(
+      1,
+      Math.floor(height / (Math.floor(random() * 5) + 7))
+    );
 
     const noiseCanvas = createCanvas(noiseWidth, noiseHeight);
     const noiseCtx = noiseCanvas.getContext("2d");

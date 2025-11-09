@@ -40,6 +40,9 @@ export class ColorGenerator {
         case ColorLimitation.DARKER:
           lightnessRange = { min: 0, max: 0.5 };
           break;
+        default:
+          // Unknown limitation, no additional constraints applied
+          break;
       }
     });
 
