@@ -1,56 +1,67 @@
-## Usage
+# Release Image Generator
 
-Get your random default image from [https://release-image-generator.trueberryless.org/](https://release-image-generator.trueberryless.org/) and adjust some parameters in the URL:
+This project generates random images with customizable patterns, colors, and text overlays.
 
-- **text**: Configure the text display in the middle of the image: [https://release-image-generator.trueberryless.org?text=2.0](https://release-image-generator.trueberryless.org?text=2.0), by default there is no text
-- **width** & **height**: Configure the width and height of the image (default: 1920x1080): [https://release-image-generator.trueberryless.org?width=1560&height=640](https://release-image-generator.trueberryless.org?width=1560&height=640)
-- **primaryColor**: Set the HEX value of the desired primary color (with or without the octothorpe - escape `#` with `%23`); example with pink: [https://release-image-generator.trueberryless.org/?text=1.0&primaryColor=%23ffc0d2](https://release-image-generator.trueberryless.org/?text=1.0&primaryColor=%23ffc0d2)
-- **imageFormat**: Define the desired image output format: [https://release-image-generator.trueberryless.org?text=1.0&imageFormat=jpg](https://release-image-generator.trueberryless.org?text=1.0&imageFormat=jpg)
+## API Usage
 
-  Image Format Options:
+### Endpoint: `GET /api/generateImage`
 
-  - `png` (default)
-  - `jpg` / `jpeg`
-  - `webp`
+### Query Parameters
 
-- **backgroundPatternType**: Define what background pattern to use (default: random): [https://release-image-generator.trueberryless.org?text=1.0&backgroundPatternType=steps](https://release-image-generator.trueberryless.org?text=1.0&backgroundPatternType=steps)
+| Parameter | Type | Default | Options |
+|-----------|------|---------|---------|
+| `text` | string | none | Any text to display |
+| `width` | number | 1920 | Any positive integer |
+| `height` | number | 1080 | Any positive integer |
+| `fontFamily` | string | readexpro | See supported fonts below |
+| `fontWeight` | string | bold | bold, medium, light |
+| `primaryColor` | string | random | Any valid CSS color or hex |
+| `imageFormat` | string | png | png, jpg, jpeg |
+| `patternType` | string | random | grid, dots, waves, triangles, hexagons, concentric, circuitry, maze, steps, geometry |
+| `noiseLevel` | string | medium | low, medium, high |
+| `seed` | number | `Date.now()` | Any positive integer |
 
-  Background Pattern Options:
+### Supported Fonts
 
-  - `circuitry`
-  - `concentric`
-  - `dots`
-  - `geometry`
-  - `grid`
-  - `hexagons`
-  - `maze`
-  - `steps`
-  - `waves`
-- **fontFamily** & **fontWeight**: Configure the font family and weight used: [https://release-image-generator.trueberryless.org?text=1.0&fontFamily=jetbrainsmono&fontWeight=bold](https://release-image-generator.trueberryless.org?text=1.0&fontFamily=jetbrainsmono&fontWeight=bold)
+- bigshoulders
+- inter
+- jetbrainsmono
+- lato
+- opensans
+- poppins
+- quicksand
+- raleway
+- readexpro
+- roboto
+- robotomono
+- rubik
+- sourcecodepro
 
-  Family Options:
+### Supported Weights
 
-  - `bigshoulders`
-  - `inter`
-  - `jetbrainsmono`
-  - `lato`
-  - `opensans`
-  - `poppins`
-  - `quicksand`
-  - `raleway`
-  - `readexpro` (default)
-  - `roboto`
-  - `robotomono`
-  - `rubik`
-  - `sourcecodepro`
+- bold
+- medium
+- light
 
-  Weight Options:
+### Example Requests
 
-  - `bold` (default)
-  - `medium`
-  - `light`
+Here are some example requests, you can also try out configuring your desired image on https://release-image-generator.trueberryless.org.
 
-  Every family works with every weight.
+**Simple image with text:**
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Hello+World
+
+**Custom dimensions and color:**
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Release+v1.0&width=1920&height=1080&primaryColor=%23ff6b6b
+
+**Specific pattern and font:**
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Welcome&patternType=hexagons&fontFamily=poppins&fontWeight=bold
+
+**JPEG format with low noise:**
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Banner&imageFormat=jpeg&noiseLevel=low
 
 ## License
 

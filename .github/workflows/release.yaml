@@ -1,4 +1,4 @@
-name: Deployment
+name: Release
 
 on:
   push:
@@ -10,8 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY: docker.io
-  IMAGE_OWNER: trueberryless
   IMAGE_NAME: release-image-generator
   NODE_VERSION: 20
 
@@ -62,8 +60,8 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'true'
         run: |
           git checkout changeset-release/main
-          VERSION=$(node -p "require('./app/package.json').version")
-          NAME=$(node -p "require('./app/package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
           git commit --amend -m "ci: release $NAME v$VERSION" --no-edit
           git push origin changeset-release/main:changeset-release/main --force
 
@@ -79,65 +77,12 @@ jobs:
       - name: Read version from package.json
         id: get_version
         run: |
-          VERSION=$(jq -r '.version' app/package.json)
+          VERSION=$(jq -r '.version' package.json)
           echo "IMAGE_TAG=$VERSION" >> $GITHUB_ENV
-
-  deployment:
-    needs: [changesets, image-tag]
-    if: >
-      (
-        needs.changesets.outputs.hasChangesets == 'false' && 
-        (
-          contains(github.event.head_commit.message, 'deploy') || 
-          contains(github.event.head_commit.message, 'release')
-        )
-      ) || 
-      github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
-        with:
-          fetch-depth: 0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
-        with:
-          context: ./app
-          push: true
-          tags: |
-            ${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:${{ needs.image-tag.outputs.IMAGE_TAG }}
-            ${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Update deployment.yaml file
-        run: |
-          yq eval '.spec.template.spec.containers[0].image = "${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:${{ needs.image-tag.outputs.IMAGE_TAG }}"' -i manifest/deployment.yaml
-
-      - uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
-        with:
-          commit_message: update deployment.json container image (automated)
 
   release:
     name: Release
-    needs: [image-tag, deployment]
+    needs: [image-tag]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -148,7 +93,7 @@ jobs:
       - id: extract-changelog
         uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2.1.0
         with:
-          file: app/CHANGELOG.md
+          file: CHANGELOG.md
           pattern: ${{ needs.image-tag.outputs.IMAGE_TAG }}
 
       - uses: ncipollo/release-action@v1
