@@ -11,9 +11,6 @@ importers:
       '@astrojs/netlify':
         specifier: ^6.6.0
         version: 6.6.0(@types/node@20.19.24)(astro@5.15.4(@netlify/blobs@10.3.3)(@types/node@20.19.24)(jiti@2.6.1)(rollup@4.53.1)(typescript@5.9.3)(yaml@2.8.1))(jiti@2.6.1)(rollup@4.53.1)(yaml@2.8.1)
-      '@types/culori':
-        specifier: ^4.0.1
-        version: 4.0.1
       astro:
         specifier: 5.15.4
         version: 5.15.4(@netlify/blobs@10.3.3)(@types/node@20.19.24)(jiti@2.6.1)(rollup@4.53.1)(typescript@5.9.3)(yaml@2.8.1)
@@ -24,6 +21,9 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
     devDependencies:
+      '@types/culori':
+        specifier: ^4.0.1
+        version: 4.0.1
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.24

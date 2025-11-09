@@ -12,7 +12,7 @@ export class BackgroundGenerator {
   ): void {
     // Generate new random colors each time (not using primaryColor palette)
     const colorPalette = Array.from({ length: 8 }, () =>
-      ColorGenerator.getRandomColor(),
+      ColorGenerator.getRandomColor(random),
     ).map((c) => ColorGenerator.colorToRgbString(c));
 
     // Random corner-to-corner gradient

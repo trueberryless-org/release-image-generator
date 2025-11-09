@@ -13,7 +13,7 @@ export class ImageGenerator {
 
   constructor(options: ImageGeneratorOptions) {
     this.options = options;
-    this.randomSeed = Date.now();
+    this.randomSeed = Math.abs(options.seed ?? Date.now());
   }
 
   // Seeded random number generator for consistent randomization
@@ -41,8 +41,9 @@ export class ImageGenerator {
 
     // Get or generate primary color
     const color = primaryColor
-      ? ColorGenerator.parseColor(primaryColor)
+      ? ColorGenerator.parseColor(this.random, primaryColor)
       : ColorGenerator.getRandomColor(
+          this.random,
           ColorLimitation.NEUTRAL_LIGHTNESS,
           ColorLimitation.NEUTRAL_SATURATION,
         );
@@ -63,7 +64,7 @@ export class ImageGenerator {
       color,
       patternType,
     );
-    NoiseGenerator.generateNoise(ctx, width, height, noiseLevel);
+    NoiseGenerator.generateNoise(ctx, width, height, noiseLevel, this.random);
 
     if (text) {
       TextGenerator.generateText(

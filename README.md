@@ -19,6 +19,7 @@ This project generates random images with customizable patterns, colors, and tex
 | `imageFormat` | string | png | png, jpg, jpeg, webp |
 | `patternType` | string | random | grid, dots, waves, triangles, hexagons, concentric, circuitry, maze, steps, geometry |
 | `noiseLevel` | string | medium | low, medium, high |
+| `seed` | number | `Date.now()` | Any positive integer |
 
 ### Supported Fonts
 
@@ -45,24 +46,20 @@ This project generates random images with customizable patterns, colors, and tex
 ### Example Requests
 
 **Simple image with text:**
-```
-https://release-image-generator.trueberryless.org/api/generateImage?text=Hello World
-```
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Hello+World
 
 **Custom dimensions and color:**
-```
-https://release-image-generator.trueberryless.org/api/generateImage?text=Release v1.0&width=1920&height=1080&primaryColor=%23ff6b6b
-```
+
+https://release-image-generator.trueberryless.org/api/generateImage?text=Release+v1.0&width=1920&height=1080&primaryColor=%23ff6b6b
 
 **Specific pattern and font:**
-```
+
 https://release-image-generator.trueberryless.org/api/generateImage?text=Welcome&patternType=hexagons&fontFamily=poppins&fontWeight=bold
-```
 
 **JPEG format with low noise:**
-```
+
 https://release-image-generator.trueberryless.org/api/generateImage?text=Banner&imageFormat=jpeg&noiseLevel=low
-```
 
 ## License
 

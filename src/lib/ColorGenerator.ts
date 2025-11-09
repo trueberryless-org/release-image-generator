@@ -12,7 +12,10 @@ export enum ColorLimitation {
 }
 
 export class ColorGenerator {
-  static getRandomColor(...limitations: ColorLimitation[]): Color {
+  static getRandomColor(
+    random: () => number,
+    ...limitations: ColorLimitation[]
+  ): Color {
     let saturationRange = { min: 0, max: 0.4 };
     let lightnessRange = { min: 0, max: 1 };
 
@@ -40,12 +43,11 @@ export class ColorGenerator {
     });
 
     const l =
-      lightnessRange.min +
-      Math.random() * (lightnessRange.max - lightnessRange.min);
+      lightnessRange.min + random() * (lightnessRange.max - lightnessRange.min);
     const c =
       saturationRange.min +
-      Math.random() * (saturationRange.max - saturationRange.min);
-    const h = Math.random() * 360;
+      random() * (saturationRange.max - saturationRange.min);
+    const h = random() * 360;
 
     return this.createColor(l, c, h, 1);
   }
@@ -62,10 +64,11 @@ export class ColorGenerator {
     return { oklch, rgb, alpha };
   }
 
-  static parseColor(colorString: string): Color {
+  static parseColor(random: () => number, colorString: string): Color {
     const parsed = parse(colorString);
     if (!parsed) {
       return this.getRandomColor(
+        random,
         ColorLimitation.NEUTRAL_LIGHTNESS,
         ColorLimitation.NEUTRAL_SATURATION,
       );

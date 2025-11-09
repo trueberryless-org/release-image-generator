@@ -1,8 +1,7 @@
 ---
-// src/pages/index.astro
+
 ---
 
-<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -117,17 +116,16 @@
 
             .random-btn {
                 padding: 0.75rem 1.5rem;
-                background: #f1f5f9;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 border: 2px solid #e2e8f0;
                 border-radius: 12px;
                 cursor: pointer;
                 font-weight: 600;
-                color: #475569;
+                color: #fff;
                 transition: all 0.2s;
             }
 
             .random-btn:hover {
-                background: #e2e8f0;
                 border-color: #cbd5e1;
             }
 
@@ -276,13 +274,15 @@
                                 type="color"
                                 id="primaryColor"
                                 name="primaryColor"
-                                value="#667eea"
+                                value="#e9e9ed"
                             />
                         </div>
                         <button
                             type="button"
                             class="random-btn"
-                            id="randomColorBtn">Random</button
+                            id="randomColorBtn"
+                            aria-pressed="false"
+                            aria-label="Use random color">Random</button
                         >
                     </div>
 
@@ -293,6 +293,17 @@
                             <option value="medium" selected>Medium</option>
                             <option value="high">High</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seed">Seed</label>
+                        <input
+                            type="number"
+                            id="seed"
+                            name="seed"
+                            min="0"
+                            max="9007199254740990"
+                        />
                     </div>
 
                     <div class="form-group">
@@ -312,41 +323,74 @@
             </form>
         </div>
 
+        <input type="hidden" id="useRandomColor" value="true" />
+
         <script>
+            // @ts-nocheck
             const form = document.getElementById("generatorForm");
             const randomColorBtn = document.getElementById("randomColorBtn");
             const colorInput = document.getElementById("primaryColor");
 
+            const useRandomColor = document.getElementById("useRandomColor");
+
             randomColorBtn.addEventListener("click", () => {
-                colorInput.value = "";
-                colorInput.style.background =
+                useRandomColor.value = "true";
+                randomColorBtn.setAttribute("aria-pressed", "true");
+                colorInput.value = "#e9e9ed";
+                randomColorBtn.style.color = "#fff";
+                randomColorBtn.style.background =
                     "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
             });
 
             colorInput.addEventListener("change", () => {
-                colorInput.style.background = "";
+                useRandomColor.value = "false";
+                randomColorBtn.setAttribute("aria-pressed", "false");
+                randomColorBtn.style.color = "#475569";
+                randomColorBtn.style.background = "#f1f5f9";
             });
 
-            form.addEventListener("submit", (e) => {
+            form.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                const formData = new FormData(form);
-                const params = new URLSearchParams();
+                const generateBtn = form.querySelector(".generate-btn");
+                const originalText = generateBtn.textContent;
+                generateBtn.disabled = true;
+                generateBtn.textContent = "Generating... ⏳";
 
-                for (const [key, value] of formData.entries()) {
-                    if (value && key !== "primaryColor") {
-                        params.append(key, value);
-                    } else if (
-                        key === "primaryColor" &&
-                        colorInput.value &&
-                        colorInput.style.background === ""
-                    ) {
-                        params.append(key, colorInput.value);
+                try {
+                    const formData = new FormData(form);
+                    const params = new URLSearchParams();
+
+                    for (const [key, value] of formData.entries()) {
+                        if (
+                            value &&
+                            key !== "primaryColor" &&
+                            key !== "useRandomColor"
+                        ) {
+                            params.append(key, value);
+                        } else if (
+                            key === "primaryColor" &&
+                            useRandomColor.value === "false"
+                        ) {
+                            params.append(key, colorInput.value);
+                        }
                     }
-                }
 
-                const url = `/api/generateImage?${params.toString()}`;
-                window.open(url, "_blank");
+                    const url = `/api/generateImage?${params.toString()}`;
+
+                    // Test the endpoint first
+                    const response = await fetch(url, { method: "HEAD" });
+                    if (response.ok) {
+                        window.open(url, "_blank");
+                    } else {
+                        throw new Error(`API returned ${response.status}`);
+                    }
+                } catch (error) {
+                    alert(`Failed to generate image: ${error.message}`);
+                } finally {
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = originalText;
+                }
             });
         </script>
     </body>

@@ -11,12 +11,18 @@ export class PatternGenerator {
     primaryColor: Color,
     patternType?: SupportedPatternType,
   ): void {
-    const lightness = primaryColor.oklch.l + Math.random() * 2.5;
+    const lightness = primaryColor.oklch.l + random() * 2.5;
 
-    // Choose random pattern if not specified (excluding geometry)
+    // Choose random pattern if not specified
     const patterns = Object.values(SupportedPatternType);
+    const patternsExcludingGeometry = patterns.filter(
+      (p) => p !== SupportedPatternType.geometry,
+    );
     const selectedPattern =
-      patternType ?? patterns[Math.floor(random() * (patterns.length - 1))];
+      patternType ??
+      patternsExcludingGeometry[
+        Math.floor(random() * patternsExcludingGeometry.length)
+      ];
 
     switch (selectedPattern) {
       case SupportedPatternType.grid:
@@ -125,8 +131,8 @@ export class PatternGenerator {
           ) +
             ((width / 150) * (height / 150)) / 50,
         );
-        const offsetX = randomOffset * 2 - randomOffset;
-        const offsetY = randomOffset * 2 - randomOffset;
+        const offsetX = random() * randomOffset * 2 - randomOffset;
+        const offsetY = random() * randomOffset * 2 - randomOffset;
 
         ctx.beginPath();
         ctx.arc(x + offsetX, y + offsetY, dotSize, 0, Math.PI * 2);
@@ -334,7 +340,7 @@ export class PatternGenerator {
         ((width / 80) * (height / 80)) / 4,
     );
     const h = size * Math.sqrt(3);
-    const randomSpacingFactor = Math.random() / 5 + 0.9;
+    const randomSpacingFactor = random() / 5 + 0.9;
     const vertSpacing = h * randomSpacingFactor;
     const horizSpacing = size * 2 * randomSpacingFactor;
 
@@ -420,8 +426,9 @@ export class PatternGenerator {
     );
     const lineChance = Math.floor(random() * 40) + 50;
 
-    for (let x = gridSize; x < width; x += gridSize) {
-      for (let y = gridSize; y < height; y += gridSize) {
+    const margin = gridSize * 3.5;
+    for (let x = -margin; x < width + margin; x += gridSize) {
+      for (let y = -margin; y < height + margin; y += gridSize) {
         if (random() * 100 < 60) {
           const nodeSize = Math.max(
             1,

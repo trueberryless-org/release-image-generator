@@ -56,6 +56,7 @@ export interface ImageGeneratorOptions {
   imageFormat: SupportedImageFormat;
   patternType?: SupportedPatternType;
   noiseLevel: NoiseLevel;
+  seed?: number;
 }
 
 export interface OklchColor {

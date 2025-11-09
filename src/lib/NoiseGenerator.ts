@@ -8,10 +8,8 @@ export class NoiseGenerator {
     width: number,
     height: number,
     noiseLevel: NoiseLevel,
+    random: () => number,
   ): void {
-    // Create independent random for noise (not using seeded random)
-    const random = Math.random;
-
     const noiseWidth = Math.floor(width / (Math.floor(random() * 5) + 7));
     const noiseHeight = Math.floor(height / (Math.floor(random() * 5) + 7));
 

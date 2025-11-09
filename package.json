@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@astrojs/netlify": "^6.6.0",
-    "@types/culori": "^4.0.1",
     "astro": "5.15.4",
     "canvas": "^3.2.0",
     "culori": "^4.0.2"
   },
   "devDependencies": {
+    "@types/culori": "^4.0.1",
     "@types/node": "^20.10.0",
     "typescript": "^5.3.3"
   }

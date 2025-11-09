@@ -53,11 +53,12 @@ export class TextGenerator {
     ctx.restore();
 
     // Draw glassmorphism background
-    const padding = fontSize / 3;
-    const rectX = textX - textWidth / 2 - padding;
-    const rectY = textY - textHeight / 2 - padding;
-    const rectWidth = textWidth + padding * 2;
-    const rectHeight = textHeight + padding * 2;
+    const paddingX = fontSize / 2;
+    const paddingY = fontSize / 3;
+    const rectX = textX - textWidth / 2 - paddingX;
+    const rectY = textY - textHeight / 2 - paddingY;
+    const rectWidth = textWidth + paddingX * 2;
+    const rectHeight = textHeight + paddingY * 2;
     const borderRadius = fontSize / 4;
 
     // Shadow
@@ -153,7 +154,7 @@ export class TextGenerator {
       current = (min + max) / 2;
     }
 
-    return Math.floor(last);
+    return Math.floor(Math.max(10, last));
   }
 
   private static roundRect(
