@@ -94,7 +94,7 @@ export class TextGenerator {
     gradient.addColorStop(0, "rgb(255, 255, 255)");
 
     const lightColor = ColorGenerator.createColor(
-      0.8 + Math.max(0, (primaryColor.oklch.l - 0.8) * 0.5),
+      Math.min(1, 0.8 + Math.max(0, (primaryColor.oklch.l - 0.8) * 0.5)),
       0,
       0,
       1,
