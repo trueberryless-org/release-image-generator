@@ -1,6 +1,6 @@
 {
   "name": "release-image-generator",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "https://release-image-generator.trueberryless.org",
   "bugs": {
     "url": "https://github.com/trueberryless-org/release-image-generator/issues"

@@ -1,5 +1,32 @@
 # release-image-generator
 
+## 0.5.0
+
+### Minor Changes
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - **⚠️ Breaking change**: Move the image generation API endpoint from `/` to `/api/generateImage`. This means that you now need to add this path to your request:
+
+  ```diff
+  -https://release-image-generator.trueberryless.org?text=1.0
+  +https://release-image-generator.trueberryless.org/api/generateImage?text=1.0
+  ```
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Add new landing page which simplifies the generation of the correct URL query parameters. Try it out on https://release-image-generator.trueberryless.org
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Migrate whole project from .NET to Astro (Typescript).
+
+### Patch Changes
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Add new `hexagons` pattern and rename old `hexagons` pattern to `triangles` since it was not hexagons.
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Migrate deployment to [Netlify](https://www.netlify.com/) to improve availability.
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Improve `circuitry` pattern by making sure the pattern extends over the edges of the image.
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Add new `noiseLevel` with three options: `low`, `medium`, `high` to control how much randomness should be created over the image.
+
+- [#45](https://github.com/trueberryless-org/release-image-generator/pull/45) [`d4b3049`](https://github.com/trueberryless-org/release-image-generator/commit/d4b30491d4affe98026b7a7d0e6e0957398192f0) Thanks [@trueberryless](https://github.com/trueberryless)! - Add new `seed` option to deterministically generate colors, patterns, noise and background. Different options regarding `text`, `width`, `height`, `fontFamily`, `fontWeight` and `imageFormat` will still result in different image outcomes. Seeded images with same parameters will be cached.
+
 ## 0.4.0
 
 ### Minor Changes
