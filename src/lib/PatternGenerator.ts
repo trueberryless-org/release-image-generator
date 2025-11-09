@@ -1,4 +1,5 @@
 import type { Canvas, CanvasRenderingContext2D } from "canvas";
+
 import type { Color } from "./types";
 import { SupportedPatternType } from "./types";
 
@@ -9,14 +10,14 @@ export class PatternGenerator {
     height: number,
     random: () => number,
     primaryColor: Color,
-    patternType?: SupportedPatternType,
+    patternType?: SupportedPatternType
   ): void {
     const lightness = primaryColor.oklch.l + random() * 2.5;
 
     // Choose random pattern if not specified
     const patterns = Object.values(SupportedPatternType);
     const patternsExcludingGeometry = patterns.filter(
-      (p) => p !== SupportedPatternType.geometry,
+      (p) => p !== SupportedPatternType.geometry
     );
     const selectedPattern =
       patternType ??
@@ -63,7 +64,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 10 + 7) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -74,9 +75,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 3 -
-            ((width / 100) * (height / 100)) / 7),
+            ((width / 100) * (height / 100)) / 7)
       ) +
-        ((width / 100) * (height / 100)) / 7,
+        ((width / 100) * (height / 100)) / 7
     );
 
     ctx.beginPath();
@@ -96,7 +97,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 11 + 12) / 255;
     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -106,18 +107,18 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 5 -
-            ((width / 100) * (height / 100)) / 8),
+            ((width / 100) * (height / 100)) / 8)
       ) +
-        ((width / 100) * (height / 100)) / 8,
+        ((width / 100) * (height / 100)) / 8
     );
     const dotSize = Math.max(
       1,
       Math.floor(
         random() *
           (((width / 140) * (height / 140)) / 40 -
-            ((width / 140) * (height / 140)) / 100),
+            ((width / 140) * (height / 140)) / 100)
       ) +
-        ((width / 140) * (height / 140)) / 100,
+        ((width / 140) * (height / 140)) / 100
     );
 
     for (let x = 0; x < width; x += spacing) {
@@ -127,9 +128,9 @@ export class PatternGenerator {
           Math.floor(
             random() *
               (((width / 150) * (height / 150)) / 25 -
-                ((width / 150) * (height / 150)) / 50),
+                ((width / 150) * (height / 150)) / 50)
           ) +
-            ((width / 150) * (height / 150)) / 50,
+            ((width / 150) * (height / 150)) / 50
         );
         const offsetX = random() * randomOffset * 2 - randomOffset;
         const offsetY = random() * randomOffset * 2 - randomOffset;
@@ -146,7 +147,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 9 + 8) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -157,27 +158,27 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 3 -
-            ((width / 100) * (height / 100)) / 7),
+            ((width / 100) * (height / 100)) / 7)
       ) +
-        ((width / 100) * (height / 100)) / 7,
+        ((width / 100) * (height / 100)) / 7
     );
     const amplitude = Math.max(
       5,
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 8 -
-            ((width / 100) * (height / 100)) / 14),
+            ((width / 100) * (height / 100)) / 14)
       ) +
-        ((width / 100) * (height / 100)) / 14,
+        ((width / 100) * (height / 100)) / 14
     );
     let frequency = Math.max(
       2,
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 15 -
-            ((width / 100) * (height / 100)) / 30),
+            ((width / 100) * (height / 100)) / 30)
       ) +
-        ((width / 100) * (height / 100)) / 30,
+        ((width / 100) * (height / 100)) / 30
     );
 
     // Horizontal wavy lines
@@ -211,7 +212,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 4) + lightness * 17 + 18) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -222,9 +223,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 140) * (height / 140)) / 50 -
-            ((width / 140) * (height / 140)) / 100),
+            ((width / 140) * (height / 140)) / 100)
       ) +
-        ((width / 140) * (height / 140)) / 100,
+        ((width / 140) * (height / 140)) / 100
     );
     const spacing = width / shapeCount;
 
@@ -235,18 +236,18 @@ export class PatternGenerator {
           10,
           Math.floor(
             random() *
-              (Math.max(width, height) / 40 - Math.max(width, height) / 100),
+              (Math.max(width, height) / 40 - Math.max(width, height) / 100)
           ) +
-            Math.max(width, height) / 100,
+            Math.max(width, height) / 100
         );
 
         const randomOffset = Math.max(
           0,
           Math.floor(
             random() *
-              (Math.max(width, height) / 50 - Math.max(width, height) / 100),
+              (Math.max(width, height) / 50 - Math.max(width, height) / 100)
           ) +
-            Math.max(width, height) / 100,
+            Math.max(width, height) / 100
         );
         const offsetX = randomOffset * 2 - randomOffset;
         const offsetY = randomOffset * 2 - randomOffset;
@@ -258,7 +259,7 @@ export class PatternGenerator {
               x - size / 2 + offsetX,
               y - size / 2 + offsetY,
               size,
-              size,
+              size
             );
             break;
           case 1: // Circles
@@ -281,7 +282,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 11 + 8) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -292,9 +293,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 2 -
-            ((width / 100) * (height / 100)) / 3),
+            ((width / 100) * (height / 100)) / 3)
       ) +
-        ((width / 100) * (height / 100)) / 3,
+        ((width / 100) * (height / 100)) / 3
     );
     const h = (size * Math.sqrt(3)) / 2;
 
@@ -323,7 +324,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 11 + 8) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -335,9 +336,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 80) * (height / 80)) / 2 -
-            ((width / 80) * (height / 80)) / 4),
+            ((width / 80) * (height / 80)) / 4)
       ) +
-        ((width / 80) * (height / 80)) / 4,
+        ((width / 80) * (height / 80)) / 4
     );
     const h = size * Math.sqrt(3);
     const randomSpacingFactor = random() / 5 + 0.9;
@@ -370,7 +371,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 8 + 10) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -388,9 +389,9 @@ export class PatternGenerator {
         Math.floor(
           random() *
             (((width / 100) * (height / 100)) / 8 -
-              ((width / 100) * (height / 100)) / 30),
+              ((width / 100) * (height / 100)) / 30)
         ) +
-          ((width / 100) * (height / 100)) / 30,
+          ((width / 100) * (height / 100)) / 30
       );
       const radiusStep = maxRadius / numCircles;
 
@@ -408,7 +409,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 5) + lightness * 14 + 12) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -420,9 +421,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           ((width / 100) * (height / 100) -
-            ((width / 100) * (height / 100)) / 5),
+            ((width / 100) * (height / 100)) / 5)
       ) +
-        ((width / 100) * (height / 100)) / 5,
+        ((width / 100) * (height / 100)) / 5
     );
     const lineChance = Math.floor(random() * 40) + 50;
 
@@ -435,9 +436,9 @@ export class PatternGenerator {
             Math.floor(
               random() *
                 (((width / 140) * (height / 140)) / 20 -
-                  ((width / 140) * (height / 140)) / 50),
+                  ((width / 140) * (height / 140)) / 50)
             ) +
-              ((width / 140) * (height / 140)) / 50,
+              ((width / 140) * (height / 140)) / 50
           );
 
           ctx.beginPath();
@@ -499,7 +500,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 11 + 11) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -510,9 +511,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 3 -
-            ((width / 100) * (height / 100)) / 6),
+            ((width / 100) * (height / 100)) / 6)
       ) +
-        ((width / 100) * (height / 100)) / 6,
+        ((width / 100) * (height / 100)) / 6
     );
     const horizontalCells = Math.floor(width / Math.max(gridSize, 1)) + 1;
     const verticalCells = Math.floor(height / Math.max(gridSize, 1)) + 1;
@@ -552,7 +553,7 @@ export class PatternGenerator {
     width: number,
     height: number,
     random: () => number,
-    lightness: number,
+    lightness: number
   ): void {
     const alpha = (Math.floor(random() * 3) + lightness * 7 + 9) / 255;
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -563,9 +564,9 @@ export class PatternGenerator {
       Math.floor(
         random() *
           (((width / 100) * (height / 100)) / 3 -
-            ((width / 100) * (height / 100)) / 8),
+            ((width / 100) * (height / 100)) / 8)
       ) +
-        ((width / 100) * (height / 100)) / 8,
+        ((width / 100) * (height / 100)) / 8
     );
     const horizontalCells = Math.floor(width / Math.max(gridSize, 1)) + 1;
     const verticalCells = Math.floor(height / Math.max(gridSize, 1)) + 1;

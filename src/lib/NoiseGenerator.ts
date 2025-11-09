@@ -1,5 +1,6 @@
 import { createCanvas } from "canvas";
 import type { CanvasRenderingContext2D } from "canvas";
+
 import { NoiseLevel } from "./types";
 
 export class NoiseGenerator {
@@ -8,7 +9,7 @@ export class NoiseGenerator {
     width: number,
     height: number,
     noiseLevel: NoiseLevel,
-    random: () => number,
+    random: () => number
   ): void {
     const noiseWidth = Math.floor(width / (Math.floor(random() * 5) + 7));
     const noiseHeight = Math.floor(height / (Math.floor(random() * 5) + 7));
@@ -47,8 +48,8 @@ export class NoiseGenerator {
               (width / 100) *
                 (height / 100) *
                 Math.floor(random() * 3 + 1) *
-                intensityMultiplier,
-            ),
+                intensityMultiplier
+            )
         );
 
         imageData.data[i] = noise; // R

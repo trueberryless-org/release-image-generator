@@ -1,11 +1,12 @@
 import { createCanvas } from "canvas";
+
+import { BackgroundGenerator } from "./BackgroundGenerator";
+import { ColorGenerator, ColorLimitation } from "./ColorGenerator";
+import { NoiseGenerator } from "./NoiseGenerator";
+import { PatternGenerator } from "./PatternGenerator";
+import { TextGenerator } from "./TextGenerator";
 import type { ImageGeneratorOptions } from "./types";
 import { SupportedImageFormat } from "./types";
-import { ColorGenerator, ColorLimitation } from "./ColorGenerator";
-import { BackgroundGenerator } from "./BackgroundGenerator";
-import { PatternGenerator } from "./PatternGenerator";
-import { NoiseGenerator } from "./NoiseGenerator";
-import { TextGenerator } from "./TextGenerator";
 
 export class ImageGenerator {
   private options: ImageGeneratorOptions;
@@ -45,7 +46,7 @@ export class ImageGenerator {
       : ColorGenerator.getRandomColor(
           this.random,
           ColorLimitation.NEUTRAL_LIGHTNESS,
-          ColorLimitation.NEUTRAL_SATURATION,
+          ColorLimitation.NEUTRAL_SATURATION
         );
 
     // Generate layers
@@ -54,7 +55,7 @@ export class ImageGenerator {
       width,
       height,
       this.random,
-      color,
+      color
     );
     PatternGenerator.generatePattern(
       ctx,
@@ -62,7 +63,7 @@ export class ImageGenerator {
       height,
       this.random,
       color,
-      patternType,
+      patternType
     );
     NoiseGenerator.generateNoise(ctx, width, height, noiseLevel, this.random);
 
@@ -74,7 +75,7 @@ export class ImageGenerator {
         height,
         fontFamily,
         fontWeight,
-        color,
+        color
       );
     }
 

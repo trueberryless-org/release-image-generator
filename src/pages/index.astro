@@ -3,395 +3,384 @@
 ---
 
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <title>Release Image Generator</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Release Image Generator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-            body {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                    Oxygen, Ubuntu, Cantarell, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 2rem;
-            }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
 
-            .container {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 24px;
-                padding: 3rem;
-                margin: 5rem;
-                max-width: 800px;
-                width: 100%;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            }
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 3rem;
+        margin: 5rem;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
 
-            h1 {
-                font-size: 2.5rem;
-                font-weight: 700;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: 0.5rem;
-            }
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+      }
 
-            .subtitle {
-                color: #64748b;
-                margin-bottom: 2rem;
-                font-size: 1.1rem;
-            }
+      .subtitle {
+        color: #64748b;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+      }
 
-            .form-grid {
-                display: grid;
-                gap: 1.5rem;
-            }
+      .form-grid {
+        display: grid;
+        gap: 1.5rem;
+      }
 
-            .form-group {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-            label {
-                font-weight: 600;
-                color: #334155;
-                font-size: 0.95rem;
-            }
+      label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.95rem;
+      }
 
-            input[type="text"],
-            input[type="number"],
-            select {
-                padding: 0.75rem 1rem;
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
-                font-size: 1rem;
-                transition: all 0.2s;
-                background: white;
-            }
+      input[type="text"],
+      input[type="number"],
+      select {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: white;
+      }
 
-            input[type="text"]:focus,
-            input[type="number"]:focus,
-            select:focus {
-                outline: none;
-                border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
 
-            input[type="color"] {
-                height: 50px;
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
-                cursor: pointer;
-                padding: 0.25rem;
-            }
+      input[type="color"] {
+        height: 50px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        padding: 0.25rem;
+      }
 
-            .row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1.5rem;
-            }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
 
-            .color-group {
-                display: flex;
-                gap: 1rem;
-                align-items: flex-end;
-            }
+      .color-group {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+      }
 
-            .color-input-wrapper {
-                flex: 1;
-            }
+      .color-input-wrapper {
+        flex: 1;
+      }
 
-            .random-btn {
-                padding: 0.75rem 1.5rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
-                cursor: pointer;
-                font-weight: 600;
-                color: #fff;
-                transition: all 0.2s;
-            }
+      .random-btn {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #fff;
+        transition: all 0.2s;
+      }
 
-            .random-btn:hover {
-                border-color: #cbd5e1;
-            }
+      .random-btn:hover {
+        border-color: #cbd5e1;
+      }
 
-            .generate-btn {
-                width: 100%;
-                padding: 1rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                border-radius: 12px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.2s;
-                margin-top: 1rem;
-            }
+      .generate-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+      }
 
-            .generate-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-            }
+      .generate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
 
-            .generate-btn:active {
-                transform: translateY(0);
-            }
+      .generate-btn:active {
+        transform: translateY(0);
+      }
 
-            .hint {
-                font-size: 0.85rem;
-                color: #94a3b8;
-                margin-top: 0.25rem;
-            }
+      .hint {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+      }
 
-            @media (max-width: 640px) {
-                .row {
-                    grid-template-columns: 1fr;
-                }
+      @media (max-width: 640px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
 
-                .container {
-                    padding: 2rem;
-                }
+        .container {
+          padding: 2rem;
+        }
 
-                h1 {
-                    font-size: 2rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🎨 Release Image Generator</h1>
-            <p class="subtitle">
-                Create beautiful, customizable images with patterns and text
-            </p>
+        h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Release Image Generator</h1>
+      <p class="subtitle">
+        Create beautiful, customizable images with patterns and text
+      </p>
 
-            <form id="generatorForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="text">Text</label>
-                        <input
-                            type="text"
-                            id="text"
-                            name="text"
-                            placeholder="Enter your text (optional)"
-                        />
-                    </div>
+      <form id="generatorForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="text">Text</label>
+            <input
+              type="text"
+              id="text"
+              name="text"
+              placeholder="Enter your text (optional)"
+            />
+          </div>
 
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="width">Width</label>
-                            <input
-                                type="number"
-                                id="width"
-                                name="width"
-                                value="1920"
-                                min="100"
-                                max="4000"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="height">Height</label>
-                            <input
-                                type="number"
-                                id="height"
-                                name="height"
-                                value="1080"
-                                min="100"
-                                max="4000"
-                            />
-                        </div>
-                    </div>
+          <div class="row">
+            <div class="form-group">
+              <label for="width">Width</label>
+              <input
+                type="number"
+                id="width"
+                name="width"
+                value="1920"
+                min="100"
+                max="4000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="height">Height</label>
+              <input
+                type="number"
+                id="height"
+                name="height"
+                value="1080"
+                min="100"
+                max="4000"
+              />
+            </div>
+          </div>
 
-                    <div class="form-group">
-                        <label for="fontFamily">Font Family</label>
-                        <select id="fontFamily" name="fontFamily">
-                            <option value="bigshoulders">Big Shoulders</option>
-                            <option value="inter">Inter</option>
-                            <option value="jetbrainsmono">JetBrains Mono</option
-                            >
-                            <option value="lato">Lato</option>
-                            <option value="opensans">Open Sans</option>
-                            <option value="poppins">Poppins</option>
-                            <option value="quicksand">Quicksand</option>
-                            <option value="raleway">Raleway</option>
-                            <option value="readexpro" selected
-                                >Readex Pro</option
-                            >
-                            <option value="roboto">Roboto</option>
-                            <option value="robotomono">Roboto Mono</option>
-                            <option value="rubik">Rubik</option>
-                            <option value="sourcecodepro"
-                                >Source Code Pro</option
-                            >
-                        </select>
-                    </div>
+          <div class="form-group">
+            <label for="fontFamily">Font Family</label>
+            <select id="fontFamily" name="fontFamily">
+              <option value="bigshoulders">Big Shoulders</option>
+              <option value="inter">Inter</option>
+              <option value="jetbrainsmono">JetBrains Mono</option>
+              <option value="lato">Lato</option>
+              <option value="opensans">Open Sans</option>
+              <option value="poppins">Poppins</option>
+              <option value="quicksand">Quicksand</option>
+              <option value="raleway">Raleway</option>
+              <option value="readexpro" selected>Readex Pro</option>
+              <option value="roboto">Roboto</option>
+              <option value="robotomono">Roboto Mono</option>
+              <option value="rubik">Rubik</option>
+              <option value="sourcecodepro">Source Code Pro</option>
+            </select>
+          </div>
 
-                    <div class="form-group">
-                        <label for="fontWeight">Font Weight</label>
-                        <select id="fontWeight" name="fontWeight">
-                            <option value="light">Light</option>
-                            <option value="medium">Medium</option>
-                            <option value="bold" selected>Bold</option>
-                        </select>
-                    </div>
+          <div class="form-group">
+            <label for="fontWeight">Font Weight</label>
+            <select id="fontWeight" name="fontWeight">
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="bold" selected>Bold</option>
+            </select>
+          </div>
 
-                    <div class="form-group">
-                        <label for="patternType">Pattern Type</label>
-                        <select id="patternType" name="patternType">
-                            <option value="">Random</option>
-                            <option value="grid">Grid</option>
-                            <option value="dots">Dots</option>
-                            <option value="waves">Waves</option>
-                            <option value="triangles">Triangles</option>
-                            <option value="hexagons">Hexagons</option>
-                            <option value="concentric">Concentric</option>
-                            <option value="circuitry">Circuitry</option>
-                            <option value="maze">Maze</option>
-                            <option value="steps">Steps</option>
-                            <option value="geometry">Geometry</option>
-                        </select>
-                    </div>
+          <div class="form-group">
+            <label for="patternType">Pattern Type</label>
+            <select id="patternType" name="patternType">
+              <option value="">Random</option>
+              <option value="grid">Grid</option>
+              <option value="dots">Dots</option>
+              <option value="waves">Waves</option>
+              <option value="triangles">Triangles</option>
+              <option value="hexagons">Hexagons</option>
+              <option value="concentric">Concentric</option>
+              <option value="circuitry">Circuitry</option>
+              <option value="maze">Maze</option>
+              <option value="steps">Steps</option>
+              <option value="geometry">Geometry</option>
+            </select>
+          </div>
 
-                    <div class="color-group">
-                        <div class="color-input-wrapper form-group">
-                            <label for="primaryColor">Primary Color</label>
-                            <input
-                                type="color"
-                                id="primaryColor"
-                                name="primaryColor"
-                                value="#e9e9ed"
-                            />
-                        </div>
-                        <button
-                            type="button"
-                            class="random-btn"
-                            id="randomColorBtn"
-                            aria-pressed="false"
-                            aria-label="Use random color">Random</button
-                        >
-                    </div>
+          <div class="color-group">
+            <div class="color-input-wrapper form-group">
+              <label for="primaryColor">Primary Color</label>
+              <input
+                type="color"
+                id="primaryColor"
+                name="primaryColor"
+                value="#e9e9ed"
+              />
+            </div>
+            <button
+              type="button"
+              class="random-btn"
+              id="randomColorBtn"
+              aria-pressed="false"
+              aria-label="Use random color">Random</button
+            >
+          </div>
 
-                    <div class="form-group">
-                        <label for="noiseLevel">Noise Level</label>
-                        <select id="noiseLevel" name="noiseLevel">
-                            <option value="low">Low</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
+          <div class="form-group">
+            <label for="noiseLevel">Noise Level</label>
+            <select id="noiseLevel" name="noiseLevel">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
 
-                    <div class="form-group">
-                        <label for="seed">Seed</label>
-                        <input
-                            type="number"
-                            id="seed"
-                            name="seed"
-                            min="0"
-                            max="9007199254740990"
-                        />
-                    </div>
+          <div class="form-group">
+            <label for="seed">Seed</label>
+            <input
+              type="number"
+              id="seed"
+              name="seed"
+              min="0"
+              max="9007199254740990"
+            />
+          </div>
 
-                    <div class="form-group">
-                        <label for="imageFormat">Image Format</label>
-                        <select id="imageFormat" name="imageFormat">
-                            <option value="png" selected>PNG</option>
-                            <option value="jpg">JPG</option>
-                            <option value="jpeg">JPEG</option>
-                            <option value="webp">WebP</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="generate-btn"
-                    >Generate Image 🚀</button
-                >
-            </form>
+          <div class="form-group">
+            <label for="imageFormat">Image Format</label>
+            <select id="imageFormat" name="imageFormat">
+              <option value="png" selected>PNG</option>
+              <option value="jpg">JPG</option>
+              <option value="jpeg">JPEG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </div>
         </div>
 
-        <input type="hidden" id="useRandomColor" value="true" />
+        <button type="submit" class="generate-btn">Generate Image 🚀</button>
+      </form>
+    </div>
 
-        <script>
-            // @ts-nocheck
-            const form = document.getElementById("generatorForm");
-            const randomColorBtn = document.getElementById("randomColorBtn");
-            const colorInput = document.getElementById("primaryColor");
+    <input type="hidden" id="useRandomColor" value="true" />
 
-            const useRandomColor = document.getElementById("useRandomColor");
+    <script>
+      // @ts-nocheck
+      const form = document.getElementById("generatorForm");
+      const randomColorBtn = document.getElementById("randomColorBtn");
+      const colorInput = document.getElementById("primaryColor");
 
-            randomColorBtn.addEventListener("click", () => {
-                useRandomColor.value = "true";
-                randomColorBtn.setAttribute("aria-pressed", "true");
-                colorInput.value = "#e9e9ed";
-                randomColorBtn.style.color = "#fff";
-                randomColorBtn.style.background =
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-            });
+      const useRandomColor = document.getElementById("useRandomColor");
 
-            colorInput.addEventListener("change", () => {
-                useRandomColor.value = "false";
-                randomColorBtn.setAttribute("aria-pressed", "false");
-                randomColorBtn.style.color = "#475569";
-                randomColorBtn.style.background = "#f1f5f9";
-            });
+      randomColorBtn.addEventListener("click", () => {
+        useRandomColor.value = "true";
+        randomColorBtn.setAttribute("aria-pressed", "true");
+        colorInput.value = "#e9e9ed";
+        randomColorBtn.style.color = "#fff";
+        randomColorBtn.style.background =
+          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+      });
 
-            form.addEventListener("submit", async (e) => {
-                e.preventDefault();
+      colorInput.addEventListener("change", () => {
+        useRandomColor.value = "false";
+        randomColorBtn.setAttribute("aria-pressed", "false");
+        randomColorBtn.style.color = "#475569";
+        randomColorBtn.style.background = "#f1f5f9";
+      });
 
-                const generateBtn = form.querySelector(".generate-btn");
-                const originalText = generateBtn.textContent;
-                generateBtn.disabled = true;
-                generateBtn.textContent = "Generating... ⏳";
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-                try {
-                    const formData = new FormData(form);
-                    const params = new URLSearchParams();
+        const generateBtn = form.querySelector(".generate-btn");
+        const originalText = generateBtn.textContent;
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Generating... ⏳";
 
-                    for (const [key, value] of formData.entries()) {
-                        if (
-                            value &&
-                            key !== "primaryColor" &&
-                            key !== "useRandomColor"
-                        ) {
-                            params.append(key, value);
-                        } else if (
-                            key === "primaryColor" &&
-                            useRandomColor.value === "false"
-                        ) {
-                            params.append(key, colorInput.value);
-                        }
-                    }
+        try {
+          const formData = new FormData(form);
+          const params = new URLSearchParams();
 
-                    const url = `/api/generateImage?${params.toString()}`;
+          for (const [key, value] of formData.entries()) {
+            if (value && key !== "primaryColor" && key !== "useRandomColor") {
+              params.append(key, value);
+            } else if (
+              key === "primaryColor" &&
+              useRandomColor.value === "false"
+            ) {
+              params.append(key, colorInput.value);
+            }
+          }
 
-                    // Test the endpoint first
-                    const response = await fetch(url, { method: "HEAD" });
-                    if (response.ok) {
-                        window.open(url, "_blank");
-                    } else {
-                        throw new Error(`API returned ${response.status}`);
-                    }
-                } catch (error) {
-                    alert(`Failed to generate image: ${error.message}`);
-                } finally {
-                    generateBtn.disabled = false;
-                    generateBtn.textContent = originalText;
-                }
-            });
-        </script>
-    </body>
+          const url = `/api/generateImage?${params.toString()}`;
+
+          // Test the endpoint first
+          const response = await fetch(url, { method: "HEAD" });
+          if (response.ok) {
+            window.open(url, "_blank");
+          } else {
+            throw new Error(`API returned ${response.status}`);
+          }
+        } catch (error) {
+          alert(`Failed to generate image: ${error.message}`);
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.textContent = originalText;
+        }
+      });
+    </script>
+  </body>
 </html>

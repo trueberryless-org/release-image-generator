@@ -1,9 +1,10 @@
 import type { CanvasRenderingContext2D } from "canvas";
 import { registerFont } from "canvas";
+import path from "path";
+
+import { ColorGenerator } from "./ColorGenerator";
 import type { Color } from "./types";
 import { SupportedFontFamily, SupportedFontWeight } from "./types";
-import { ColorGenerator } from "./ColorGenerator";
-import path from "path";
 
 export class TextGenerator {
   static generateText(
@@ -13,7 +14,7 @@ export class TextGenerator {
     height: number,
     fontFamily: SupportedFontFamily,
     fontWeight: SupportedFontWeight,
-    primaryColor: Color,
+    primaryColor: Color
   ): void {
     // Register font
     this.loadFont(fontFamily, fontWeight);
@@ -25,7 +26,7 @@ export class TextGenerator {
       width - width / 3,
       width > height ? height / 3 : width / 3,
       fontFamily,
-      fontWeight,
+      fontWeight
     );
 
     // Set font
@@ -88,7 +89,7 @@ export class TextGenerator {
       rectX,
       rectY,
       rectX + rectWidth,
-      rectY + rectHeight,
+      rectY + rectHeight
     );
 
     gradient.addColorStop(0, "rgb(255, 255, 255)");
@@ -97,7 +98,7 @@ export class TextGenerator {
       Math.min(1, 0.8 + Math.max(0, (primaryColor.oklch.l - 0.8) * 0.5)),
       0,
       0,
-      1,
+      1
     );
     gradient.addColorStop(1, ColorGenerator.colorToRgbString(lightColor));
 
@@ -108,20 +109,20 @@ export class TextGenerator {
 
   private static loadFont(
     fontFamily: SupportedFontFamily,
-    fontWeight: SupportedFontWeight,
+    fontWeight: SupportedFontWeight
   ): void {
     try {
       const fontPath = path.join(
         process.cwd(),
         "public",
         "fonts",
-        `${fontFamily}-${fontWeight}.ttf`,
+        `${fontFamily}-${fontWeight}.ttf`
       );
       registerFont(fontPath, { family: fontFamily, weight: fontWeight });
     } catch (error) {
       // Fallback to default font if loading fails
       console.warn(
-        `Failed to load font ${fontFamily}-${fontWeight}, using default`,
+        `Failed to load font ${fontFamily}-${fontWeight}, using default`
       );
     }
   }
@@ -132,7 +133,7 @@ export class TextGenerator {
     maxWidth: number,
     maxHeight: number,
     fontFamily: SupportedFontFamily,
-    fontWeight: SupportedFontWeight,
+    fontWeight: SupportedFontWeight
   ): number {
     let min = 0;
     let max = maxHeight;
@@ -163,7 +164,7 @@ export class TextGenerator {
     y: number,
     width: number,
     height: number,
-    radius: number,
+    radius: number
   ): void {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);

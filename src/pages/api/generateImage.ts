@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { ImageGenerator } from "../../lib/ImageGenerator";
 
+import { ImageGenerator } from "../../lib/ImageGenerator";
 import {
   type ImageGeneratorOptions,
   NoiseLevel,
@@ -23,7 +23,7 @@ const isValidImageFormat = (value: string): value is SupportedImageFormat =>
   Object.values(SupportedImageFormat).includes(value as any);
 
 const isValidPatternType = (
-  value: string | undefined,
+  value: string | undefined
 ): value is SupportedPatternType | undefined =>
   Object.values(SupportedPatternType).includes(value as any) ||
   value === undefined;
@@ -62,11 +62,11 @@ export const GET: APIRoute = async ({ url }) => {
     text: params.get("text") ?? undefined,
     width: Math.max(
       100,
-      Math.min(4000, parseInt(params.get("width") || "1920") || 1920),
+      Math.min(4000, parseInt(params.get("width") || "1920") || 1920)
     ),
     height: Math.max(
       100,
-      Math.min(4000, parseInt(params.get("height") || "1080") || 1080),
+      Math.min(4000, parseInt(params.get("height") || "1080") || 1080)
     ),
     fontFamily,
     fontWeight,

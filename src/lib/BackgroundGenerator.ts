@@ -1,6 +1,7 @@
 import type { CanvasRenderingContext2D } from "canvas";
-import type { Color } from "./types";
+
 import { ColorGenerator } from "./ColorGenerator";
+import type { Color } from "./types";
 
 export class BackgroundGenerator {
   static generateBackground(
@@ -8,11 +9,11 @@ export class BackgroundGenerator {
     width: number,
     height: number,
     random: () => number,
-    primaryColor: Color,
+    primaryColor: Color
   ): void {
     // Generate new random colors each time (not using primaryColor palette)
     const colorPalette = Array.from({ length: 8 }, () =>
-      ColorGenerator.getRandomColor(random),
+      ColorGenerator.getRandomColor(random)
     ).map((c) => ColorGenerator.colorToRgbString(c));
 
     // Random corner-to-corner gradient
@@ -30,7 +31,7 @@ export class BackgroundGenerator {
       corner1.x1,
       corner1.y1,
       corner1.x2,
-      corner1.y2,
+      corner1.y2
     );
 
     colorPalette.forEach((color, i) => {
@@ -45,7 +46,7 @@ export class BackgroundGenerator {
       primaryColor,
       6,
       30,
-      0.3,
+      0.3
     ).map((c) => ColorGenerator.colorToRgbString(c));
 
     const corner2 = corners[Math.floor(random() * corners.length)];
@@ -54,7 +55,7 @@ export class BackgroundGenerator {
       corner2.x1,
       corner2.y1,
       corner2.x2,
-      corner2.y2,
+      corner2.y2
     );
 
     colorPalette2.forEach((color, i) => {
@@ -69,7 +70,7 @@ export class BackgroundGenerator {
       primaryColor,
       3,
       40,
-      0.2,
+      0.2
     ).map((c) => ColorGenerator.colorToRgbString(c));
 
     const corner3 = corners[Math.floor(random() * corners.length)];
@@ -78,7 +79,7 @@ export class BackgroundGenerator {
       corner3.x1,
       corner3.y1,
       corner3.x2,
-      corner3.y2,
+      corner3.y2
     );
 
     colorPalette3.forEach((color, i) => {

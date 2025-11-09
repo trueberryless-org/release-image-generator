@@ -1,5 +1,6 @@
+import { converter, oklch, parse } from "culori";
+
 import type { Color, OklchColor, RgbColor } from "./types";
-import { parse, oklch, converter } from "culori";
 
 export enum ColorLimitation {
   ALL = "ALL",
@@ -56,7 +57,7 @@ export class ColorGenerator {
     l: number,
     c: number,
     h: number,
-    alpha: number = 1,
+    alpha: number = 1
   ): Color {
     const oklch = { l, c, h };
     const rgb = this.oklchToRgb(oklch);
@@ -70,7 +71,7 @@ export class ColorGenerator {
       return this.getRandomColor(
         random,
         ColorLimitation.NEUTRAL_LIGHTNESS,
-        ColorLimitation.NEUTRAL_SATURATION,
+        ColorLimitation.NEUTRAL_SATURATION
       );
     }
 
@@ -79,7 +80,7 @@ export class ColorGenerator {
       oklchClr.l || 0.5,
       oklchClr.c || 0.1,
       oklchClr.h || 0,
-      oklchClr.alpha ?? 1,
+      oklchClr.alpha ?? 1
     );
   }
 
@@ -87,7 +88,7 @@ export class ColorGenerator {
     primaryColor: Color,
     numberOfColors: number = 5,
     spread: number = 20,
-    alpha: number = 1,
+    alpha: number = 1
   ): Color[] {
     const halfPaletteSize = Math.floor(numberOfColors / 2);
     const colors: Color[] = [];
@@ -99,8 +100,8 @@ export class ColorGenerator {
           primaryColor.oklch.l,
           primaryColor.oklch.c,
           shiftedHue,
-          alpha,
-        ),
+          alpha
+        )
       );
     }
 
