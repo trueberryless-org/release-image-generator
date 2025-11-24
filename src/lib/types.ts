@@ -8,6 +8,7 @@ export enum SupportedFontFamily {
   quicksand = "quicksand",
   raleway = "raleway",
   readexpro = "readexpro",
+  redhattext = "redhattext",
   roboto = "roboto",
   robotomono = "robotomono",
   rubik = "rubik",
