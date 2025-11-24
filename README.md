@@ -32,6 +32,7 @@ This project generates random images with customizable patterns, colors, and tex
 - quicksand
 - raleway
 - readexpro
+- redhattext
 - roboto
 - robotomono
 - rubik
