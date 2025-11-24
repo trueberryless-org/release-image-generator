@@ -349,36 +349,27 @@
         generateBtn.disabled = true;
         generateBtn.textContent = "Generating... ⏳";
 
-        try {
-          const formData = new FormData(form);
-          const params = new URLSearchParams();
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
 
-          for (const [key, value] of formData.entries()) {
-            if (value && key !== "primaryColor" && key !== "useRandomColor") {
-              params.append(key, value);
-            } else if (
-              key === "primaryColor" &&
-              useRandomColor.value === "false"
-            ) {
-              params.append(key, colorInput.value);
-            }
+        for (const [key, value] of formData.entries()) {
+          if (value && key !== "primaryColor" && key !== "useRandomColor") {
+            params.append(key, value);
+          } else if (
+            key === "primaryColor" &&
+            useRandomColor.value === "false"
+          ) {
+            params.append(key, colorInput.value);
           }
-
-          const url = `/api/generateImage?${params.toString()}`;
-
-          // Test the endpoint first
-          const response = await fetch(url, { method: "HEAD" });
-          if (response.ok) {
-            window.open(url, "_blank");
-          } else {
-            throw new Error(`API returned ${response.status}`);
-          }
-        } catch (error) {
-          alert(`Failed to generate image: ${error.message}`);
-        } finally {
-          generateBtn.disabled = false;
-          generateBtn.textContent = originalText;
         }
+
+        const url = `/api/generateImage?${params.toString()}`;
+
+        // Test the endpoint first
+        const response = await fetch(url, { method: "HEAD" });
+        window.open(url, "_blank");
+        generateBtn.disabled = false;
+        generateBtn.textContent = originalText;
       });
     </script>
   </body>
