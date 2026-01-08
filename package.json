@@ -1,7 +1,7 @@
 {
   "name": "release-image-generator",
   "version": "0.5.0",
-  "homepage": "https://release-image-generator.trueberryless.org",
+  "homepage": "https://github.com/trueberryless-org/release-image-generator",
   "bugs": {
     "url": "https://github.com/trueberryless-org/release-image-generator/issues"
   },
@@ -26,12 +26,12 @@
     "culori": "^4.0.2"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.7",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/culori": "^4.0.1",
     "@types/node": "^20.10.0",
-    "prettier": "3.5.3",
+    "prettier": "3.7.4",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "^5.3.3"
   },
