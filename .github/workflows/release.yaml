@@ -31,13 +31,13 @@ jobs:
           private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Checkout Repo
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup PNPM
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
@@ -72,7 +72,7 @@ jobs:
       IMAGE_TAG: ${{ env.IMAGE_TAG }}
     steps:
       - name: Check out the repo
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Read version from package.json
         id: get_version
@@ -88,7 +88,7 @@ jobs:
       contents: write
     steps:
       - name: Check out the repo
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - id: extract-changelog
         uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2.1.0
