@@ -20,9 +20,9 @@
     "version": "pnpm changeset version && pnpm i --no-frozen-lockfile"
   },
   "dependencies": {
-    "@astrojs/netlify": "^7.0.3",
-    "astro": "6.4.6",
-    "canvas": "^3.2.1",
+    "@astrojs/netlify": "^7.0.13",
+    "astro": "6.4.8",
+    "canvas": "^3.2.3",
     "culori": "^4.0.2"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
     "@changesets/cli": "^2.31.1",
     "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "@types/culori": "^4.0.1",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.9.4",
     "prettier": "3.9.5",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "^5.9.3"
