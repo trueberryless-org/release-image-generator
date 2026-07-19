@@ -1,7 +1,7 @@
 {
   "name": "release-image-generator",
   "version": "0.5.0",
-  "homepage": "https://release-image-generator.trueberryless.org",
+  "homepage": "https://release-image-generator.netlify.app/",
   "bugs": {
     "url": "https://github.com/trueberryless-org/release-image-generator/issues"
   },
@@ -10,7 +10,7 @@
     "url": "https://github.com/trueberryless-org/release-image-generator.git"
   },
   "license": "MIT",
-  "author": "trueberryless <trueberryless@gmail.com> (https://trueberryless.org)",
+  "author": "trueberryless <trueberryless@gmail.com> (https://felixs.dev)",
   "type": "module",
   "scripts": {
     "build": "astro build",
