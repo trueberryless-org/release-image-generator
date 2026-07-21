@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@astrojs/netlify": "^7.0.13",
-    "astro": "6.4.8",
+    "astro": "7.1.0",
     "canvas": "^3.2.3",
     "culori": "^4.0.2"
   },
