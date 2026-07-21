@@ -33,7 +33,7 @@
     "@types/node": "^25.9.4",
     "prettier": "3.9.5",
     "prettier-plugin-astro": "0.14.1",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "packageManager": "pnpm@11.1.2"
 }
