@@ -31,7 +31,7 @@ jobs:
           private_key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Checkout Repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup PNPM
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
@@ -72,7 +72,7 @@ jobs:
       IMAGE_TAG: ${{ env.IMAGE_TAG }}
     steps:
       - name: Check out the repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Read version from package.json
         id: get_version
@@ -88,7 +88,7 @@ jobs:
       contents: write
     steps:
       - name: Check out the repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - id: extract-changelog
         uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2.1.0
