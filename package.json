@@ -20,7 +20,7 @@
     "version": "pnpm changeset version && pnpm i --no-frozen-lockfile"
   },
   "dependencies": {
-    "@astrojs/netlify": "^7.0.13",
+    "@astrojs/netlify": "^8.0.0",
     "astro": "6.4.8",
     "canvas": "^3.2.3",
     "culori": "^4.0.2"
