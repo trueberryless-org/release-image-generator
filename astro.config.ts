@@ -3,7 +3,9 @@ import node from "@astrojs/node";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  adapter: process.env["NETLIFY"] ? netlify() : node({ mode: "standalone" }),
+  adapter: process.env["NETLIFY"]
+    ? netlify({ includeFiles: ["./public/fonts/**"] })
+    : node({ mode: "standalone" }),
   output: "server",
   site: "https://release-image-generator.netlify.app",
   vite: {

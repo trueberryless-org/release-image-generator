@@ -98,7 +98,7 @@ test.describe("landing page", () => {
     await generate.click();
     await expect(status).toContainText("image 2 of 2");
 
-    expect(bodies).toHaveLength(2);
+    await expect.poll(() => bodies.length).toBe(2);
     expect(bodies[0]).not.toBe(bodies[1]);
   });
 
