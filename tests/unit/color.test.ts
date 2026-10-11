@@ -10,7 +10,7 @@ import {
   oklchToRgb,
   parseColor,
 } from "../../src/lib/color";
-import { createRandom } from "../../src/lib/image";
+import { createRandom } from "../../src/lib/random";
 
 describe("parseColor", () => {
   test("parses hex colors", () => {

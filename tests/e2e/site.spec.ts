@@ -57,35 +57,160 @@ test.describe("landing page", () => {
     await expect(url).toHaveValue(/primaryColor=%23/);
   });
 
-  test("generates and shows the image", async ({ page }) => {
+  test("generates a new image with a new seed on every click", async ({
+    page,
+  }) => {
+    const seed = page.getByLabel("Seed");
+    const generate = page.getByRole("button", { name: "New image" });
+    const status = page.getByRole("status");
+
+    await generate.click();
+    await expect(status).toContainText("image 1 of 1");
+    const first = await seed.inputValue();
+
+    await generate.click();
+    await expect(status).toContainText("image 2 of 2");
+    const second = await seed.inputValue();
+
+    expect(first).not.toBe("");
+    expect(second).not.toBe(first);
+    await expect(page.getByLabel("API URL")).toHaveValue(
+      new RegExp(`seed=${second}(&|$)`)
+    );
+  });
+
+  test("loads a different image for a different seed", async ({ page }) => {
+    const bodies: string[] = [];
+
+    page.on("response", async (response) => {
+      if (response.url().includes("/api/generateImage")) {
+        bodies.push((await response.body()).toString("base64"));
+      }
+    });
+
+    const generate = page.getByRole("button", { name: "New image" });
+    const status = page.getByRole("status");
+
+    await page.getByLabel("Width (px)").fill("200");
+    await page.getByLabel("Height (px)").fill("120");
+    await generate.click();
+    await expect(status).toContainText("image 1 of 1");
+    await generate.click();
+    await expect(status).toContainText("image 2 of 2");
+
+    expect(bodies).toHaveLength(2);
+    expect(bodies[0]).not.toBe(bodies[1]);
+  });
+
+  test("goes back and forth between the generated images", async ({
+    page,
+  }) => {
+    const seed = page.getByLabel("Seed");
+    const generate = page.getByRole("button", { name: "New image" });
+    const back = page.getByRole("button", { name: "Back" });
+    const forward = page.getByRole("button", { name: "Forward" });
+    const status = page.getByRole("status");
+
+    await expect(back).toBeDisabled();
+    await expect(forward).toBeDisabled();
+
+    await generate.click();
+    await expect(status).toContainText("image 1 of 1");
+    const first = await seed.inputValue();
+    await generate.click();
+    await expect(status).toContainText("image 2 of 2");
+    const second = await seed.inputValue();
+    await generate.click();
+    await expect(status).toContainText("image 3 of 3");
+
+    await back.click();
+    await expect(status).toContainText("image 2 of 3");
+    await expect(seed).toHaveValue(second);
+    await expect(forward).toBeEnabled();
+
+    await back.click();
+    await expect(status).toContainText("image 1 of 3");
+    await expect(seed).toHaveValue(first);
+    await expect(back).toBeDisabled();
+
+    await forward.click();
+    await expect(seed).toHaveValue(second);
+
+    await generate.click();
+    await expect(status).toContainText("image 3 of 3");
+    await expect(forward).toBeDisabled();
+  });
+
+  test("supports the keyboard shortcuts", async ({ page }) => {
+    const seed = page.getByLabel("Seed");
+    const status = page.getByRole("status");
+
+    await page.keyboard.press("r");
+    await expect(status).toContainText("image 1 of 1");
+    const first = await seed.inputValue();
+    await page.keyboard.press("r");
+    await expect(status).toContainText("image 2 of 2");
+
+    await page.keyboard.press("b");
+    await expect(seed).toHaveValue(first);
+    await expect(status).toContainText("image 1 of 2");
+    await page.keyboard.press("f");
+    await expect(status).toContainText("image 2 of 2");
+  });
+
+  test("keeps the shortcuts out of the text field", async ({ page }) => {
+    await page.getByLabel("Text").fill("rbf");
+
+    await expect(page.getByLabel("Text")).toHaveValue("rbf");
+    await expect(page.getByLabel("Seed")).toHaveValue("");
+  });
+
+  test("keeps the seed when an option changes", async ({ page }) => {
+    const seed = page.getByLabel("Seed");
+    const status = page.getByRole("status");
+
+    await page.getByRole("button", { name: "New image" }).click();
+    await expect(status).toContainText("image 1 of 1");
+    const current = await seed.inputValue();
+
+    await page.getByLabel("Text").fill("v2");
+    await expect(status).toContainText("image 1 of 1");
+
+    await expect(seed).toHaveValue(current);
+    await expect(page.getByLabel("API URL")).toHaveValue(/text=v2/);
+    await expect(
+      page.getByRole("link", { name: "Open image in a new tab" })
+    ).toHaveAttribute("href", /text=v2/);
+  });
+
+  test("uses a seed that was typed in", async ({ page }) => {
+    const status = page.getByRole("status");
+
     await page.getByLabel("Width (px)").fill("320");
     await page.getByLabel("Height (px)").fill("180");
     await page.getByLabel("Seed").fill("5");
-    await page.getByRole("button", { name: "Generate image" }).click();
+    await page.getByLabel("Seed").press("Tab");
 
     const preview = page.getByRole("img", { name: "Generated preview" });
 
+    await expect(status).toContainText("Seed 5");
     await expect(preview).toBeVisible();
-    await expect(page.getByRole("status")).toHaveText("Image generated.");
     expect(
       await preview.evaluate((image: HTMLImageElement) => image.naturalWidth)
     ).toBe(320);
-    await expect(
-      page.getByRole("link", { name: "Open image in a new tab" })
-    ).toHaveAttribute("href", /seed=5/);
   });
 
   test("reports an image that cannot be generated", async ({ page }) => {
     await page.route("**/api/generateImage*", (route) =>
       route.fulfill({ body: "Error generating image", status: 500 })
     );
-    await page.getByRole("button", { name: "Generate image" }).click();
+    await page.getByRole("button", { name: "New image" }).click();
 
     await expect(page.getByRole("status")).toContainText(
       "could not be generated"
     );
     await expect(
-      page.getByRole("button", { name: "Generate image" })
+      page.getByRole("button", { name: "New image" })
     ).toBeEnabled();
   });
 });

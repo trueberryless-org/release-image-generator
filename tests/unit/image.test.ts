@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { createRandom, generateImage, getContentType } from "../../src/lib/image";
+import { generateImage, getContentType } from "../../src/lib/image";
 import type { ImageGeneratorOptions } from "../../src/lib/types";
 import {
   NoiseLevel,
@@ -26,26 +26,6 @@ function createOptions(
     ...overrides,
   };
 }
-
-describe("createRandom", () => {
-  test("returns the same sequence for the same seed", () => {
-    const first = createRandom(42);
-    const second = createRandom(42);
-
-    expect([first(), first(), first()]).toEqual([second(), second(), second()]);
-  });
-
-  test("returns values in the range [0, 1)", () => {
-    const random = createRandom(7);
-
-    for (let index = 0; index < 100; index++) {
-      const value = random();
-
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(1);
-    }
-  });
-});
 
 describe("getContentType", () => {
   test.each([

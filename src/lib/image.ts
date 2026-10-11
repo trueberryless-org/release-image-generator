@@ -4,13 +4,10 @@ import { generateBackground } from "./background";
 import { ColorLimitation, getRandomColor, parseColor } from "./color";
 import { generateNoise } from "./noise";
 import { generatePattern } from "./pattern";
+import { createRandom } from "./random";
 import { generateText } from "./text";
 import type { ImageGeneratorOptions } from "./types";
 import { SupportedImageFormat } from "./types";
-
-const LCG_MULTIPLIER = 9301;
-const LCG_INCREMENT = 49297;
-const LCG_MODULUS = 233280;
 
 export function generateImage(options: ImageGeneratorOptions): Buffer {
   const {
@@ -52,16 +49,6 @@ export function generateImage(options: ImageGeneratorOptions): Buffer {
 
 export function getContentType(imageFormat: SupportedImageFormat) {
   return isJpeg(imageFormat) ? "image/jpeg" : "image/png";
-}
-
-export function createRandom(seed: number) {
-  let state = Math.abs(seed);
-
-  return () => {
-    state = (state * LCG_MULTIPLIER + LCG_INCREMENT) % LCG_MODULUS;
-
-    return state / LCG_MODULUS;
-  };
 }
 
 function isJpeg(imageFormat: SupportedImageFormat) {

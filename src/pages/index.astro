@@ -182,7 +182,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
                 max={MAX_SEED}
                 min="0"
                 name="seed"
-                placeholder="Random"
+                placeholder="New on each image"
                 type="number"
               />
             </div>
@@ -200,14 +200,40 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
               </select>
             </div>
           </div>
-
-          <button class="primary" type="submit">
-            Generate image
-          </button>
         </form>
 
         <section aria-labelledby="result-title" class="result">
           <h2 id="result-title">Result</h2>
+          <div aria-label="Image history" class="toolbar" role="group">
+            <button
+              aria-keyshortcuts="B"
+              disabled
+              id="back"
+              title="Previous image (B)"
+              type="button"
+            >
+              Back
+            </button>
+            <button
+              aria-keyshortcuts="F"
+              disabled
+              id="forward"
+              title="Next image (F)"
+              type="button"
+            >
+              Forward
+            </button>
+            <button
+              aria-keyshortcuts="R"
+              class="primary"
+              form="generator"
+              id="generate"
+              title="New image (R)"
+              type="submit"
+            >
+              New image
+            </button>
+          </div>
           <p class="status" id="status" role="status">
             Choose your options and generate an image.
           </p>
@@ -231,6 +257,11 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
           <a class="open" hidden id="open" rel="noopener" target="_blank">
             Open image in a new tab
           </a>
+          <p class="hint">
+            Shortcuts: <kbd>R</kbd> new image, <kbd>B</kbd> back, <kbd>F</kbd>{" "}
+            forward. Changing an option keeps the seed, so the same image is
+            rendered with the new options.
+          </p>
         </section>
       </div>
 
@@ -247,6 +278,11 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
 
     <script>
       import { buildImagePath } from "../lib/form";
+      import { createHistory } from "../lib/history";
+      import { MAX_SEED } from "../lib/options";
+      import { randomSeed } from "../lib/random";
+
+      const RENDER_DELAY_MS = 300;
 
       const form = document.querySelector<HTMLFormElement>("#generator")!;
       const preview = document.querySelector<HTMLImageElement>("#preview")!;
@@ -254,10 +290,19 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
       const urlInput = document.querySelector<HTMLInputElement>("#url")!;
       const open = document.querySelector<HTMLAnchorElement>("#open")!;
       const copy = document.querySelector<HTMLButtonElement>("#copy")!;
+      const back = document.querySelector<HTMLButtonElement>("#back")!;
+      const forward = document.querySelector<HTMLButtonElement>("#forward")!;
+      const generate = document.querySelector<HTMLButtonElement>("#generate")!;
+      const seedInput = document.querySelector<HTMLInputElement>("#seed")!;
       const randomColor =
         document.querySelector<HTMLInputElement>("#randomColor")!;
       const primaryColor =
         document.querySelector<HTMLInputElement>("#primaryColor")!;
+
+      const history = createHistory();
+      let loading: AbortController | undefined;
+      let renderTimeout: ReturnType<typeof setTimeout> | undefined;
+      let isLoading = false;
 
       function getPath() {
         return buildImagePath(new FormData(form));
@@ -267,35 +312,46 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
         urlInput.value = new URL(getPath(), location.origin).href;
       }
 
-      randomColor.addEventListener("change", () => {
-        primaryColor.disabled = randomColor.checked;
-        updateUrl();
-      });
+      function updateButtons() {
+        back.disabled = isLoading || !history.canGoBack;
+        forward.disabled = isLoading || !history.canGoForward;
+        generate.disabled = isLoading;
+      }
 
-      form.addEventListener("input", updateUrl);
+      function render() {
+        clearTimeout(renderTimeout);
+        loading?.abort();
 
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
+        const controller = new AbortController();
         const path = getPath();
-        const submit = form.querySelector<HTMLButtonElement>(".primary")!;
+        const { index, total } = history.position;
 
-        submit.disabled = true;
+        loading = controller;
+        isLoading = true;
         status.textContent = "Generating image…";
-        preview.hidden = true;
+        updateButtons();
+        updateUrl();
+        open.href = path;
+        open.hidden = false;
 
-        const loading = new AbortController();
         const finish = (message: string, loaded: boolean) => {
-          loading.abort();
-          preview.hidden = !loaded;
+          controller.abort();
+          isLoading = false;
+          preview.hidden = !loaded && preview.hidden;
           status.textContent = message;
-          submit.disabled = false;
+          updateButtons();
         };
 
         preview.addEventListener(
           "load",
-          () => finish("Image generated.", true),
-          { signal: loading.signal }
+          () => {
+            preview.hidden = false;
+            finish(
+              `Seed ${history.current} · image ${index} of ${total}`,
+              true
+            );
+          },
+          { signal: controller.signal }
         );
         preview.addEventListener(
           "error",
@@ -304,13 +360,91 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
               "The image could not be generated. Check the options and try again.",
               false
             ),
-          { signal: loading.signal }
+          { signal: controller.signal }
         );
         preview.src = path;
+      }
 
-        open.href = path;
-        open.hidden = false;
+      function showSeed(seed: number | undefined) {
+        if (seed === undefined) return;
+
+        seedInput.value = String(seed);
+        render();
+      }
+
+      function newImage() {
+        if (isLoading) return;
+
+        showSeed(history.push(randomSeed()));
+      }
+
+      function goBack() {
+        if (!isLoading && history.canGoBack) showSeed(history.back());
+      }
+
+      function goForward() {
+        if (!isLoading && history.canGoForward) showSeed(history.forward());
+      }
+
+      function isEditable(target: EventTarget | null) {
+        return (
+          target instanceof HTMLElement &&
+          (target.isContentEditable ||
+            ["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName))
+        );
+      }
+
+      function handleOptionChange(target: EventTarget | null) {
         updateUrl();
+
+        if (target === seedInput || history.current === undefined) return;
+
+        clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(render, RENDER_DELAY_MS);
+      }
+
+      randomColor.addEventListener("change", () => {
+        primaryColor.disabled = randomColor.checked;
+        handleOptionChange(randomColor);
+      });
+
+      form.addEventListener("input", (event) => {
+        if (event.target !== randomColor) handleOptionChange(event.target);
+      });
+
+      seedInput.addEventListener("change", () => {
+        const seed = Number.parseInt(seedInput.value, 10);
+
+        if (!Number.isFinite(seed)) {
+          seedInput.value =
+            history.current === undefined ? "" : String(history.current);
+          updateUrl();
+          return;
+        }
+
+        showSeed(history.push(Math.max(0, Math.min(MAX_SEED, seed))));
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        newImage();
+      });
+
+      back.addEventListener("click", goBack);
+      forward.addEventListener("click", goForward);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+        if (isEditable(event.target)) return;
+
+        const key = event.key.toLowerCase();
+
+        if (key === "r") newImage();
+        else if (key === "b") goBack();
+        else if (key === "f") goForward();
+        else return;
+
+        event.preventDefault();
       });
 
       copy.addEventListener("click", async () => {
@@ -521,6 +655,31 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
   .status {
     color: var(--muted);
     margin: 0;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .toolbar .primary {
+    margin-inline-start: auto;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  kbd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    padding: 0 0.375rem;
   }
 
   .preview {
