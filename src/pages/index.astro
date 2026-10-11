@@ -1,376 +1,811 @@
 ---
+import { FONT_LABELS } from "../lib/form";
+import {
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+  MAX_SEED,
+  MAX_SIZE,
+  MIN_SIZE,
+} from "../lib/options";
+import {
+  NoiseLevel,
+  SupportedFontWeight,
+  SupportedImageFormat,
+  SupportedPatternType,
+} from "../lib/types";
 
+const title = "Release Image Generator";
+const description =
+  "Generate images with a random pattern, a color and a short text for your releases. Configure the options and copy the API URL.";
+const canonical = new URL("/", Astro.site).href;
+const image = new URL("/og-image.png", Astro.site).href;
+
+const capitalize = (value: string) =>
+  `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+const imageFormats = Object.values(SupportedImageFormat).filter(
+  (format) => format !== SupportedImageFormat.jpeg
+);
 ---
 
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>Release Image Generator</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-          Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-      }
-
-      .container {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 24px;
-        padding: 3rem;
-        margin: 5rem;
-        max-width: 800px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      }
-
-      h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 0.5rem;
-      }
-
-      .subtitle {
-        color: #64748b;
-        margin-bottom: 2rem;
-        font-size: 1.1rem;
-      }
-
-      .form-grid {
-        display: grid;
-        gap: 1.5rem;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      label {
-        font-weight: 600;
-        color: #334155;
-        font-size: 0.95rem;
-      }
-
-      input[type="text"],
-      input[type="number"],
-      select {
-        padding: 0.75rem 1rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        background: white;
-      }
-
-      input[type="text"]:focus,
-      input[type="number"]:focus,
-      select:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      }
-
-      input[type="color"] {
-        height: 50px;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        cursor: pointer;
-        padding: 0.25rem;
-      }
-
-      .row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-      }
-
-      .color-group {
-        display: flex;
-        gap: 1rem;
-        align-items: flex-end;
-      }
-
-      .color-input-wrapper {
-        flex: 1;
-      }
-
-      .random-btn {
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 600;
-        color: #fff;
-        transition: all 0.2s;
-      }
-
-      .random-btn:hover {
-        border-color: #cbd5e1;
-      }
-
-      .generate-btn {
-        width: 100%;
-        padding: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        margin-top: 1rem;
-      }
-
-      .generate-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      }
-
-      .generate-btn:active {
-        transform: translateY(0);
-      }
-
-      .hint {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        margin-top: 0.25rem;
-      }
-
-      @media (max-width: 640px) {
-        .row {
-          grid-template-columns: 1fr;
-        }
-
-        .container {
-          padding: 2rem;
-        }
-
-        h1 {
-          font-size: 2rem;
-        }
-      }
-    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Release Image Generator: Beautiful images for your releases."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
   </head>
   <body>
-    <div class="container">
-      <h1>🎨 Release Image Generator</h1>
-      <p class="subtitle">
-        Create beautiful, customizable images with patterns and text
+    <header class="container">
+      <h1>{title}</h1>
+      <p>
+        Images with a random pattern, a color and a short text, made for release
+        announcements.
       </p>
+    </header>
 
-      <form id="generatorForm">
-        <div class="form-grid">
-          <div class="form-group">
+    <main class="container">
+      <div class="layout">
+        <form aria-labelledby="options-title" id="generator">
+          <h2 id="options-title">Options</h2>
+          <div class="field">
             <label for="text">Text</label>
             <input
-              type="text"
+              autocomplete="off"
               id="text"
               name="text"
-              placeholder="Enter your text (optional)"
+              placeholder="v1.0.0"
+              type="text"
             />
           </div>
 
           <div class="row">
-            <div class="form-group">
-              <label for="width">Width</label>
+            <div class="field">
+              <label for="width">Width (px)</label>
               <input
-                type="number"
+                aria-describedby="size-hint"
                 id="width"
+                inputmode="numeric"
+                max={MAX_SIZE}
+                min={MIN_SIZE}
                 name="width"
-                value="1920"
-                min="100"
-                max="4000"
-              />
-            </div>
-            <div class="form-group">
-              <label for="height">Height</label>
-              <input
                 type="number"
-                id="height"
-                name="height"
-                value="1080"
-                min="100"
-                max="4000"
+                value={DEFAULT_WIDTH}
               />
+            </div>
+            <div class="field">
+              <label for="height">Height (px)</label>
+              <input
+                aria-describedby="size-hint"
+                id="height"
+                inputmode="numeric"
+                max={MAX_SIZE}
+                min={MIN_SIZE}
+                name="height"
+                type="number"
+                value={DEFAULT_HEIGHT}
+              />
+            </div>
+            <p class="hint full" id="size-hint">
+              Between {MIN_SIZE} and {MAX_SIZE} pixels.
+            </p>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="fontFamily">Font</label>
+              <select id="fontFamily" name="fontFamily">
+                {Object.entries(FONT_LABELS).map(([value, label]) => (
+                  <option selected={value === "readexpro"} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div class="field">
+              <label for="fontWeight">Font weight</label>
+              <select id="fontWeight" name="fontWeight">
+                {Object.values(SupportedFontWeight).map((value) => (
+                  <option
+                    selected={value === SupportedFontWeight.bold}
+                    value={value}
+                  >
+                    {capitalize(value)}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="fontFamily">Font Family</label>
-            <select id="fontFamily" name="fontFamily">
-              <option value="bigshoulders">Big Shoulders</option>
-              <option value="inter">Inter</option>
-              <option value="jetbrainsmono">JetBrains Mono</option>
-              <option value="lato">Lato</option>
-              <option value="opensans">Open Sans</option>
-              <option value="poppins">Poppins</option>
-              <option value="quicksand">Quicksand</option>
-              <option value="raleway">Raleway</option>
-              <option value="readexpro" selected>Readex Pro</option>
-              <option value="redhattext">Red Hat Text</option>
-              <option value="roboto">Roboto</option>
-              <option value="robotomono">Roboto Mono</option>
-              <option value="rubik">Rubik</option>
-              <option value="sourcecodepro">Source Code Pro</option>
-            </select>
+          <div class="row">
+            <div class="field">
+              <label for="patternType">Pattern</label>
+              <select id="patternType" name="patternType">
+                <option value="">Random</option>
+                {Object.values(SupportedPatternType).map((value) => (
+                  <option value={value}>{capitalize(value)}</option>
+                ))}
+              </select>
+            </div>
+            <div class="field">
+              <label for="noiseLevel">Noise</label>
+              <select id="noiseLevel" name="noiseLevel">
+                {Object.values(NoiseLevel).map((value) => (
+                  <option selected={value === NoiseLevel.medium} value={value}>
+                    {capitalize(value)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="fontWeight">Font Weight</label>
-            <select id="fontWeight" name="fontWeight">
-              <option value="light">Light</option>
-              <option value="medium">Medium</option>
-              <option value="bold" selected>Bold</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="patternType">Pattern Type</label>
-            <select id="patternType" name="patternType">
-              <option value="">Random</option>
-              <option value="grid">Grid</option>
-              <option value="dots">Dots</option>
-              <option value="waves">Waves</option>
-              <option value="triangles">Triangles</option>
-              <option value="hexagons">Hexagons</option>
-              <option value="concentric">Concentric</option>
-              <option value="circuitry">Circuitry</option>
-              <option value="maze">Maze</option>
-              <option value="steps">Steps</option>
-              <option value="geometry">Geometry</option>
-            </select>
-          </div>
-
-          <div class="color-group">
-            <div class="color-input-wrapper form-group">
-              <label for="primaryColor">Primary Color</label>
+          <fieldset>
+            <legend>Color</legend>
+            <div class="color">
               <input
-                type="color"
+                aria-label="Primary color"
+                disabled
                 id="primaryColor"
                 name="primaryColor"
-                value="#e9e9ed"
+                type="color"
+                value="#7c8cff"
+              />
+              <label class="check" for="randomColor">
+                <input
+                  checked
+                  id="randomColor"
+                  name="randomColor"
+                  type="checkbox"
+                />
+                Random color
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="row">
+            <div class="field">
+              <label for="seed">Seed</label>
+              <input
+                aria-describedby="seed-hint"
+                id="seed"
+                inputmode="numeric"
+                max={MAX_SEED}
+                min="0"
+                name="seed"
+                type="number"
               />
             </div>
+            <div class="field">
+              <label for="imageFormat">Format</label>
+              <select id="imageFormat" name="imageFormat">
+                {imageFormats.map((value) => (
+                  <option
+                    selected={value === SupportedImageFormat.png}
+                    value={value}
+                  >
+                    {value.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p class="hint full" id="seed-hint">
+              The same seed always gives the same image. “New image” picks a new
+              seed.
+            </p>
+          </div>
+        </form>
+
+        <section aria-labelledby="result-title" class="result">
+          <h2 id="result-title">Result</h2>
+          <div aria-label="Image history" class="toolbar" role="group">
             <button
+              aria-disabled="true"
+              aria-keyshortcuts="B"
+              id="back"
+              title="Previous image (B)"
               type="button"
-              class="random-btn"
-              id="randomColorBtn"
-              aria-pressed="false"
-              aria-label="Use random color">Random</button
             >
+              Back
+            </button>
+            <button
+              aria-disabled="true"
+              aria-keyshortcuts="F"
+              id="forward"
+              title="Next image (F)"
+              type="button"
+            >
+              Forward
+            </button>
+            <button
+              aria-keyshortcuts="R"
+              class="primary"
+              form="generator"
+              id="generate"
+              title="New image (R)"
+              type="submit"
+            >
+              New image
+            </button>
           </div>
-
-          <div class="form-group">
-            <label for="noiseLevel">Noise Level</label>
-            <select id="noiseLevel" name="noiseLevel">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-            </select>
+          <p class="status" id="status" role="status">
+            Choose your options and generate an image.
+          </p>
+          <img
+            alt=""
+            class="preview"
+            hidden
+            id="preview"
+            width="480"
+            height="270"
+          />
+          <div class="field">
+            <label for="url">API URL</label>
+            <div class="copy">
+              <input id="url" readonly type="text" />
+              <button id="copy" type="button">
+                Copy
+              </button>
+            </div>
           </div>
-
-          <div class="form-group">
-            <label for="seed">Seed</label>
-            <input
-              type="number"
-              id="seed"
-              name="seed"
-              min="0"
-              max="9007199254740990"
-            />
+          <a class="open" hidden id="open" rel="noopener" target="_blank">
+            Open image in a new tab
+          </a>
+          <div class="shortcuts">
+            <label class="check" for="shortcuts">
+              <input checked id="shortcuts" type="checkbox" />
+              Keyboard shortcuts
+            </label>
+            <p class="hint" id="shortcuts-hint">
+              <kbd>R</kbd> new image, <kbd>B</kbd> back, <kbd>F</kbd> forward.
+              Changing an option keeps the seed, so the same image is rendered
+              with the new options.
+            </p>
           </div>
+        </section>
+      </div>
+    </main>
 
-          <div class="form-group">
-            <label for="imageFormat">Image Format</label>
-            <select id="imageFormat" name="imageFormat">
-              <option value="png" selected>PNG</option>
-              <option value="jpg">JPG</option>
-            </select>
-          </div>
-        </div>
-
-        <button type="submit" class="generate-btn">Generate Image 🚀</button>
-      </form>
-    </div>
-
-    <input type="hidden" id="useRandomColor" value="true" />
+    <footer class="container">
+      <a href="https://github.com/trueberryless-org/release-image-generator">
+        Source code
+      </a>{" "}
+      and{" "}
+      <a href="https://github.com/trueberryless-org/release-image-generator#api-usage">
+        API documentation
+      </a>
+    </footer>
 
     <script>
-      // @ts-nocheck
-      const form = document.getElementById("generatorForm");
-      const randomColorBtn = document.getElementById("randomColorBtn");
-      const colorInput = document.getElementById("primaryColor");
+      import { buildImagePath, describeImage } from "../lib/form";
+      import { createHistory } from "../lib/history";
+      import { MAX_SEED } from "../lib/options";
+      import { randomSeed } from "../lib/random";
 
-      const useRandomColor = document.getElementById("useRandomColor");
+      const RENDER_DELAY_MS = 300;
+      const SHORTCUTS_KEY = "release-image-generator:shortcuts";
 
-      randomColorBtn.addEventListener("click", () => {
-        useRandomColor.value = "true";
-        randomColorBtn.setAttribute("aria-pressed", "true");
-        colorInput.value = "#e9e9ed";
-        randomColorBtn.style.color = "#fff";
-        randomColorBtn.style.background =
-          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-      });
+      const form = document.querySelector<HTMLFormElement>("#generator")!;
+      const preview = document.querySelector<HTMLImageElement>("#preview")!;
+      const status = document.querySelector<HTMLElement>("#status")!;
+      const urlInput = document.querySelector<HTMLInputElement>("#url")!;
+      const open = document.querySelector<HTMLAnchorElement>("#open")!;
+      const copy = document.querySelector<HTMLButtonElement>("#copy")!;
+      const back = document.querySelector<HTMLButtonElement>("#back")!;
+      const forward = document.querySelector<HTMLButtonElement>("#forward")!;
+      const generate = document.querySelector<HTMLButtonElement>("#generate")!;
+      const seedInput = document.querySelector<HTMLInputElement>("#seed")!;
+      const textInput = document.querySelector<HTMLInputElement>("#text")!;
+      const shortcuts = document.querySelector<HTMLInputElement>("#shortcuts")!;
+      const randomColor =
+        document.querySelector<HTMLInputElement>("#randomColor")!;
+      const primaryColor =
+        document.querySelector<HTMLInputElement>("#primaryColor")!;
 
-      colorInput.addEventListener("change", () => {
-        useRandomColor.value = "false";
-        randomColorBtn.setAttribute("aria-pressed", "false");
-        randomColorBtn.style.color = "#475569";
-        randomColorBtn.style.background = "#f1f5f9";
-      });
+      const history = createHistory();
+      let loading: AbortController | undefined;
+      let renderTimeout: ReturnType<typeof setTimeout> | undefined;
+      let isLoading = false;
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+      function getPath() {
+        return buildImagePath(new FormData(form));
+      }
 
-        const generateBtn = form.querySelector(".generate-btn");
-        const originalText = generateBtn.textContent;
-        generateBtn.disabled = true;
-        generateBtn.textContent = "Generating... ⏳";
+      function updateUrl() {
+        urlInput.value = new URL(getPath(), location.origin).href;
+      }
 
-        const formData = new FormData(form);
-        const params = new URLSearchParams();
+      function setUnavailable(button: HTMLButtonElement, unavailable: boolean) {
+        button.setAttribute("aria-disabled", String(unavailable));
+      }
 
-        for (const [key, value] of formData.entries()) {
-          if (value && key !== "primaryColor" && key !== "useRandomColor") {
-            params.append(key, value);
-          } else if (
-            key === "primaryColor" &&
-            useRandomColor.value === "false"
-          ) {
-            params.append(key, colorInput.value);
-          }
+      function updateButtons() {
+        setUnavailable(back, isLoading || !history.canGoBack);
+        setUnavailable(forward, isLoading || !history.canGoForward);
+        setUnavailable(generate, isLoading);
+      }
+
+      function render({ announce }: { announce: boolean }) {
+        clearTimeout(renderTimeout);
+        loading?.abort();
+
+        const controller = new AbortController();
+        const path = getPath();
+        const seed = history.current;
+        const { index, total } = history.position;
+
+        loading = controller;
+        isLoading = true;
+        if (announce) status.textContent = "Generating image…";
+        updateButtons();
+        updateUrl();
+        open.href = path;
+        open.hidden = false;
+
+        const finish = (message: string | undefined) => {
+          controller.abort();
+          isLoading = false;
+          if (message) status.textContent = message;
+          updateButtons();
+        };
+
+        preview.addEventListener(
+          "load",
+          () => {
+            preview.alt = describeImage(textInput.value, seed);
+            preview.hidden = false;
+            finish(
+              announce ? `Seed ${seed} · image ${index} of ${total}` : undefined
+            );
+          },
+          { signal: controller.signal }
+        );
+        preview.addEventListener(
+          "error",
+          () =>
+            finish(
+              "The image could not be generated. Check the options and try again."
+            ),
+          { signal: controller.signal }
+        );
+        preview.src = path;
+      }
+
+      function showSeed(seed: number | undefined) {
+        if (seed === undefined) return;
+
+        seedInput.value = String(seed);
+        render({ announce: true });
+      }
+
+      function newImage() {
+        if (isLoading) return;
+
+        showSeed(history.push(randomSeed()));
+      }
+
+      function goBack() {
+        if (!isLoading && history.canGoBack) showSeed(history.back());
+      }
+
+      function goForward() {
+        if (!isLoading && history.canGoForward) showSeed(history.forward());
+      }
+
+      const NON_TEXT_INPUT_TYPES = new Set([
+        "button",
+        "checkbox",
+        "color",
+        "radio",
+        "reset",
+        "submit",
+      ]);
+
+      function isEditable(target: EventTarget | null) {
+        if (!(target instanceof HTMLElement)) return false;
+        if (target.isContentEditable) return true;
+        if (target instanceof HTMLInputElement) {
+          return !NON_TEXT_INPUT_TYPES.has(target.type);
         }
 
-        const url = `/api/generateImage?${params.toString()}`;
+        return (
+          target instanceof HTMLSelectElement ||
+          target instanceof HTMLTextAreaElement
+        );
+      }
 
-        // Test the endpoint first
-        const response = await fetch(url, { method: "HEAD" });
-        window.open(url, "_blank");
-        generateBtn.disabled = false;
-        generateBtn.textContent = originalText;
+      function handleOptionChange(target: EventTarget | null) {
+        updateUrl();
+
+        if (target === seedInput || history.current === undefined) return;
+
+        clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(
+          () => render({ announce: false }),
+          RENDER_DELAY_MS
+        );
+      }
+
+      function readShortcutsSetting() {
+        try {
+          return localStorage.getItem(SHORTCUTS_KEY) !== "off";
+        } catch {
+          return true;
+        }
+      }
+
+      function saveShortcutsSetting(enabled: boolean) {
+        try {
+          localStorage.setItem(SHORTCUTS_KEY, enabled ? "on" : "off");
+        } catch {
+          return;
+        }
+      }
+
+      randomColor.addEventListener("change", () => {
+        primaryColor.disabled = randomColor.checked;
+        handleOptionChange(randomColor);
       });
+
+      form.addEventListener("input", (event) => {
+        if (event.target !== randomColor) handleOptionChange(event.target);
+      });
+
+      seedInput.addEventListener("change", () => {
+        const seed = Number.parseInt(seedInput.value, 10);
+
+        if (!Number.isFinite(seed)) {
+          seedInput.value =
+            history.current === undefined ? "" : String(history.current);
+          updateUrl();
+          return;
+        }
+
+        showSeed(history.push(Math.max(0, Math.min(MAX_SEED, seed))));
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        newImage();
+      });
+
+      back.addEventListener("click", goBack);
+      forward.addEventListener("click", goForward);
+
+      shortcuts.checked = readShortcutsSetting();
+      shortcuts.addEventListener("change", () =>
+        saveShortcutsSetting(shortcuts.checked)
+      );
+
+      document.addEventListener("keydown", (event) => {
+        if (!shortcuts.checked) return;
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+        if (isEditable(event.target)) return;
+
+        const key = event.key.toLowerCase();
+
+        if (key === "r") newImage();
+        else if (key === "b") goBack();
+        else if (key === "f") goForward();
+        else return;
+
+        event.preventDefault();
+      });
+
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(urlInput.value);
+          status.textContent = "API URL copied to the clipboard.";
+        } catch {
+          urlInput.select();
+          status.textContent = "Press Ctrl+C to copy the selected API URL.";
+        }
+      });
+
+      updateUrl();
     </script>
   </body>
 </html>
+
+<style is:global>
+  :root {
+    --bg: #f7f7f8;
+    --surface: #ffffff;
+    --text: #18181b;
+    --muted: #52525b;
+    --border: #d4d4d8;
+    --control-border: #71717a;
+    --accent: #4f46e5;
+    --accent-text: #ffffff;
+    --focus: #4f46e5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #3f3f46;
+      --control-border: #8b8b94;
+      --accent: #818cf8;
+      --accent-text: #09090b;
+      --focus: #a5b4fc;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .container {
+    margin-inline: auto;
+    max-width: 68rem;
+    padding-inline: 1rem;
+  }
+
+  header.container {
+    padding-top: 2rem;
+  }
+
+  footer.container {
+    padding-bottom: 3rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    margin: 0 0 0.75rem;
+  }
+
+  header p {
+    color: var(--muted);
+    margin: 0 0 2rem;
+    max-width: 40rem;
+  }
+
+  .layout {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 56rem) {
+    .layout {
+      align-items: start;
+      grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    }
+  }
+
+  form,
+  .result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+
+  .field {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  label,
+  legend {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  legend {
+    margin-bottom: 0.25rem;
+    padding: 0;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    background: var(--bg);
+    border: 1px solid var(--control-border);
+    border-radius: 0.375rem;
+    color: inherit;
+    font: inherit;
+    min-height: 2.5rem;
+    padding: 0.375rem 0.625rem;
+    width: 100%;
+  }
+
+  input[type="color"] {
+    background: var(--bg);
+    border: 1px solid var(--control-border);
+    border-radius: 0.375rem;
+    height: 2.5rem;
+    padding: 0.125rem;
+    width: 3.5rem;
+  }
+
+  input:disabled {
+    opacity: 0.5;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .color {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .check {
+    align-items: center;
+    display: flex;
+    font-weight: 400;
+    gap: 0.5rem;
+  }
+
+  .check input {
+    accent-color: var(--accent);
+    height: 1.5rem;
+    margin: 0;
+    width: 1.5rem;
+  }
+
+  button {
+    background: var(--bg);
+    border: 1px solid var(--control-border);
+    border-radius: 0.375rem;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    min-height: 2.5rem;
+    padding: 0.375rem 1rem;
+  }
+
+  button[aria-disabled="true"] {
+    background: transparent;
+    border-style: dashed;
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .primary[aria-disabled="true"] {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--muted);
+  }
+
+  .primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  .status {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .toolbar .primary {
+    margin-inline-start: auto;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .full {
+    grid-column: 1 / -1;
+  }
+
+  .shortcuts {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  kbd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    padding: 0 0.375rem;
+  }
+
+  .preview {
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .copy {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .open,
+  footer a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  footer {
+    color: var(--muted);
+    margin-top: 2rem;
+  }
+
+  @media (forced-colors: active) {
+    button[aria-disabled="true"] {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    button {
+      transition: opacity 0.15s;
+    }
+  }
+</style>

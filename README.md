@@ -46,23 +46,42 @@ This project generates random images with customizable patterns, colors, and tex
 
 ### Example Requests
 
-Here are some example requests, you can also try out configuring your desired image on https://release-image-generator.trueberryless.org.
+Here are some example requests, you can also try out configuring your desired image on https://release-image-generator.netlify.app.
 
 **Simple image with text:**
 
-https://release-image-generator.trueberryless.org/api/generateImage?text=Hello+World
+https://release-image-generator.netlify.app/api/generateImage?text=Hello+World
 
 **Custom dimensions and color:**
 
-https://release-image-generator.trueberryless.org/api/generateImage?text=Release+v1.0&width=1920&height=1080&primaryColor=%23ff6b6b
+https://release-image-generator.netlify.app/api/generateImage?text=Release+v1.0&width=1920&height=1080&primaryColor=%23ff6b6b
 
 **Specific pattern and font:**
 
-https://release-image-generator.trueberryless.org/api/generateImage?text=Welcome&patternType=hexagons&fontFamily=poppins&fontWeight=bold
+https://release-image-generator.netlify.app/api/generateImage?text=Welcome&patternType=hexagons&fontFamily=poppins&fontWeight=bold
 
 **JPEG format with low noise:**
 
-https://release-image-generator.trueberryless.org/api/generateImage?text=Banner&imageFormat=jpeg&noiseLevel=low
+https://release-image-generator.netlify.app/api/generateImage?text=Banner&imageFormat=jpeg&noiseLevel=low
+
+## Development
+
+```sh
+pnpm install
+pnpm dev
+```
+
+The image rendering uses the native `canvas` module, so `pnpm install` must be allowed to run its install script (already configured in `pnpm-workspace.yaml`).
+
+| Command         | Action                                |
+| --------------- | ------------------------------------- |
+| `pnpm dev`      | Start the local development server    |
+| `pnpm build`    | Build the site to `./dist/`           |
+| `pnpm check`    | Type check the project                |
+| `pnpm lint`     | Lint with oxlint                      |
+| `pnpm knip`     | Find unused files and dependencies    |
+| `pnpm test`     | Run the unit tests                    |
+| `pnpm test:e2e` | Run the end-to-end tests (Playwright) |
 
 ## License
 
