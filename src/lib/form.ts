@@ -37,3 +37,12 @@ export function buildImagePath(formData: FormData) {
 
   return `${API_PATH}?${params.toString()}`;
 }
+
+export function describeImage(text: string, seed: number | undefined) {
+  const trimmed = text.trim();
+  const content = trimmed ? `with the text “${trimmed}”` : "without text";
+
+  return seed === undefined
+    ? `Generated image ${content}`
+    : `Generated image ${content}, seed ${seed}`;
+}

@@ -53,17 +53,18 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
     <meta name="twitter:image" content={image} />
   </head>
   <body>
-    <main>
-      <header>
-        <h1>{title}</h1>
-        <p>
-          Images with a random pattern, a color and a short text, made for
-          release announcements.
-        </p>
-      </header>
+    <header class="container">
+      <h1>{title}</h1>
+      <p>
+        Images with a random pattern, a color and a short text, made for release
+        announcements.
+      </p>
+    </header>
 
+    <main class="container">
       <div class="layout">
-        <form id="generator" aria-label="Image options">
+        <form aria-labelledby="options-title" id="generator">
+          <h2 id="options-title">Options</h2>
           <div class="field">
             <label for="text">Text</label>
             <input
@@ -79,6 +80,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
             <div class="field">
               <label for="width">Width (px)</label>
               <input
+                aria-describedby="size-hint"
                 id="width"
                 inputmode="numeric"
                 max={MAX_SIZE}
@@ -91,6 +93,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
             <div class="field">
               <label for="height">Height (px)</label>
               <input
+                aria-describedby="size-hint"
                 id="height"
                 inputmode="numeric"
                 max={MAX_SIZE}
@@ -100,6 +103,9 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
                 value={DEFAULT_HEIGHT}
               />
             </div>
+            <p class="hint full" id="size-hint">
+              Between {MIN_SIZE} and {MAX_SIZE} pixels.
+            </p>
           </div>
 
           <div class="row">
@@ -177,12 +183,12 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
             <div class="field">
               <label for="seed">Seed</label>
               <input
+                aria-describedby="seed-hint"
                 id="seed"
                 inputmode="numeric"
                 max={MAX_SEED}
                 min="0"
                 name="seed"
-                placeholder="New on each image"
                 type="number"
               />
             </div>
@@ -199,6 +205,10 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
                 ))}
               </select>
             </div>
+            <p class="hint full" id="seed-hint">
+              The same seed always gives the same image. “New image” picks a new
+              seed.
+            </p>
           </div>
         </form>
 
@@ -206,8 +216,8 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
           <h2 id="result-title">Result</h2>
           <div aria-label="Image history" class="toolbar" role="group">
             <button
+              aria-disabled="true"
               aria-keyshortcuts="B"
-              disabled
               id="back"
               title="Previous image (B)"
               type="button"
@@ -215,8 +225,8 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
               Back
             </button>
             <button
+              aria-disabled="true"
               aria-keyshortcuts="F"
-              disabled
               id="forward"
               title="Next image (F)"
               type="button"
@@ -238,7 +248,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
             Choose your options and generate an image.
           </p>
           <img
-            alt="Generated preview"
+            alt=""
             class="preview"
             hidden
             id="preview"
@@ -257,32 +267,39 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
           <a class="open" hidden id="open" rel="noopener" target="_blank">
             Open image in a new tab
           </a>
-          <p class="hint">
-            Shortcuts: <kbd>R</kbd> new image, <kbd>B</kbd> back, <kbd>F</kbd>{" "}
-            forward. Changing an option keeps the seed, so the same image is
-            rendered with the new options.
-          </p>
+          <div class="shortcuts">
+            <label class="check" for="shortcuts">
+              <input checked id="shortcuts" type="checkbox" />
+              Keyboard shortcuts
+            </label>
+            <p class="hint" id="shortcuts-hint">
+              <kbd>R</kbd> new image, <kbd>B</kbd> back, <kbd>F</kbd> forward.
+              Changing an option keeps the seed, so the same image is rendered
+              with the new options.
+            </p>
+          </div>
         </section>
       </div>
-
-      <footer>
-        <a href="https://github.com/trueberryless-org/release-image-generator">
-          Source code
-        </a>{" "}
-        and{" "}
-        <a href="https://github.com/trueberryless-org/release-image-generator#api-usage">
-          API documentation
-        </a>
-      </footer>
     </main>
 
+    <footer class="container">
+      <a href="https://github.com/trueberryless-org/release-image-generator">
+        Source code
+      </a>{" "}
+      and{" "}
+      <a href="https://github.com/trueberryless-org/release-image-generator#api-usage">
+        API documentation
+      </a>
+    </footer>
+
     <script>
-      import { buildImagePath } from "../lib/form";
+      import { buildImagePath, describeImage } from "../lib/form";
       import { createHistory } from "../lib/history";
       import { MAX_SEED } from "../lib/options";
       import { randomSeed } from "../lib/random";
 
       const RENDER_DELAY_MS = 300;
+      const SHORTCUTS_KEY = "release-image-generator:shortcuts";
 
       const form = document.querySelector<HTMLFormElement>("#generator")!;
       const preview = document.querySelector<HTMLImageElement>("#preview")!;
@@ -294,6 +311,8 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
       const forward = document.querySelector<HTMLButtonElement>("#forward")!;
       const generate = document.querySelector<HTMLButtonElement>("#generate")!;
       const seedInput = document.querySelector<HTMLInputElement>("#seed")!;
+      const textInput = document.querySelector<HTMLInputElement>("#text")!;
+      const shortcuts = document.querySelector<HTMLInputElement>("#shortcuts")!;
       const randomColor =
         document.querySelector<HTMLInputElement>("#randomColor")!;
       const primaryColor =
@@ -312,43 +331,47 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
         urlInput.value = new URL(getPath(), location.origin).href;
       }
 
-      function updateButtons() {
-        back.disabled = isLoading || !history.canGoBack;
-        forward.disabled = isLoading || !history.canGoForward;
-        generate.disabled = isLoading;
+      function setUnavailable(button: HTMLButtonElement, unavailable: boolean) {
+        button.setAttribute("aria-disabled", String(unavailable));
       }
 
-      function render() {
+      function updateButtons() {
+        setUnavailable(back, isLoading || !history.canGoBack);
+        setUnavailable(forward, isLoading || !history.canGoForward);
+        setUnavailable(generate, isLoading);
+      }
+
+      function render({ announce }: { announce: boolean }) {
         clearTimeout(renderTimeout);
         loading?.abort();
 
         const controller = new AbortController();
         const path = getPath();
+        const seed = history.current;
         const { index, total } = history.position;
 
         loading = controller;
         isLoading = true;
-        status.textContent = "Generating image…";
+        if (announce) status.textContent = "Generating image…";
         updateButtons();
         updateUrl();
         open.href = path;
         open.hidden = false;
 
-        const finish = (message: string, loaded: boolean) => {
+        const finish = (message: string | undefined) => {
           controller.abort();
           isLoading = false;
-          preview.hidden = !loaded && preview.hidden;
-          status.textContent = message;
+          if (message) status.textContent = message;
           updateButtons();
         };
 
         preview.addEventListener(
           "load",
           () => {
+            preview.alt = describeImage(textInput.value, seed);
             preview.hidden = false;
             finish(
-              `Seed ${history.current} · image ${index} of ${total}`,
-              true
+              announce ? `Seed ${seed} · image ${index} of ${total}` : undefined
             );
           },
           { signal: controller.signal }
@@ -357,8 +380,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
           "error",
           () =>
             finish(
-              "The image could not be generated. Check the options and try again.",
-              false
+              "The image could not be generated. Check the options and try again."
             ),
           { signal: controller.signal }
         );
@@ -369,7 +391,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
         if (seed === undefined) return;
 
         seedInput.value = String(seed);
-        render();
+        render({ announce: true });
       }
 
       function newImage() {
@@ -386,11 +408,25 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
         if (!isLoading && history.canGoForward) showSeed(history.forward());
       }
 
+      const NON_TEXT_INPUT_TYPES = new Set([
+        "button",
+        "checkbox",
+        "color",
+        "radio",
+        "reset",
+        "submit",
+      ]);
+
       function isEditable(target: EventTarget | null) {
+        if (!(target instanceof HTMLElement)) return false;
+        if (target.isContentEditable) return true;
+        if (target instanceof HTMLInputElement) {
+          return !NON_TEXT_INPUT_TYPES.has(target.type);
+        }
+
         return (
-          target instanceof HTMLElement &&
-          (target.isContentEditable ||
-            ["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName))
+          target instanceof HTMLSelectElement ||
+          target instanceof HTMLTextAreaElement
         );
       }
 
@@ -400,7 +436,26 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
         if (target === seedInput || history.current === undefined) return;
 
         clearTimeout(renderTimeout);
-        renderTimeout = setTimeout(render, RENDER_DELAY_MS);
+        renderTimeout = setTimeout(
+          () => render({ announce: false }),
+          RENDER_DELAY_MS
+        );
+      }
+
+      function readShortcutsSetting() {
+        try {
+          return localStorage.getItem(SHORTCUTS_KEY) !== "off";
+        } catch {
+          return true;
+        }
+      }
+
+      function saveShortcutsSetting(enabled: boolean) {
+        try {
+          localStorage.setItem(SHORTCUTS_KEY, enabled ? "on" : "off");
+        } catch {
+          return;
+        }
       }
 
       randomColor.addEventListener("change", () => {
@@ -433,7 +488,13 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
       back.addEventListener("click", goBack);
       forward.addEventListener("click", goForward);
 
+      shortcuts.checked = readShortcutsSetting();
+      shortcuts.addEventListener("change", () =>
+        saveShortcutsSetting(shortcuts.checked)
+      );
+
       document.addEventListener("keydown", (event) => {
+        if (!shortcuts.checked) return;
         if (event.metaKey || event.ctrlKey || event.altKey) return;
         if (isEditable(event.target)) return;
 
@@ -469,6 +530,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
     --text: #18181b;
     --muted: #52525b;
     --border: #d4d4d8;
+    --control-border: #71717a;
     --accent: #4f46e5;
     --accent-text: #ffffff;
     --focus: #4f46e5;
@@ -481,6 +543,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
       --text: #f4f4f5;
       --muted: #a1a1aa;
       --border: #3f3f46;
+      --control-border: #8b8b94;
       --accent: #818cf8;
       --accent-text: #09090b;
       --focus: #a5b4fc;
@@ -505,10 +568,18 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
     margin: 0;
   }
 
-  main {
+  .container {
     margin-inline: auto;
     max-width: 68rem;
-    padding: 2rem 1rem 3rem;
+    padding-inline: 1rem;
+  }
+
+  header.container {
+    padding-top: 2rem;
+  }
+
+  footer.container {
+    padding-bottom: 3rem;
   }
 
   h1 {
@@ -584,7 +655,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
   input[type="number"],
   select {
     background: var(--bg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--control-border);
     border-radius: 0.375rem;
     color: inherit;
     font: inherit;
@@ -595,7 +666,7 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
 
   input[type="color"] {
     background: var(--bg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--control-border);
     border-radius: 0.375rem;
     height: 2.5rem;
     padding: 0.125rem;
@@ -625,13 +696,15 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
   }
 
   .check input {
-    height: 1.125rem;
-    width: 1.125rem;
+    accent-color: var(--accent);
+    height: 1.5rem;
+    margin: 0;
+    width: 1.5rem;
   }
 
   button {
     background: var(--bg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--control-border);
     border-radius: 0.375rem;
     color: inherit;
     cursor: pointer;
@@ -641,9 +714,17 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
     padding: 0.375rem 1rem;
   }
 
-  button:disabled {
-    cursor: progress;
-    opacity: 0.6;
+  button[aria-disabled="true"] {
+    background: transparent;
+    border-style: dashed;
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .primary[aria-disabled="true"] {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--muted);
   }
 
   .primary {
@@ -671,6 +752,15 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
     color: var(--muted);
     font-size: 0.875rem;
     margin: 0;
+  }
+
+  .full {
+    grid-column: 1 / -1;
+  }
+
+  .shortcuts {
+    display: grid;
+    gap: 0.5rem;
   }
 
   kbd {
@@ -704,6 +794,13 @@ const imageFormats = Object.values(SupportedImageFormat).filter(
   footer {
     color: var(--muted);
     margin-top: 2rem;
+  }
+
+  @media (forced-colors: active) {
+    button[aria-disabled="true"] {
+      border-color: GrayText;
+      color: GrayText;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {

@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import { API_PATH, FONT_LABELS, buildImagePath } from "../../src/lib/form";
+import {
+  API_PATH,
+  FONT_LABELS,
+  buildImagePath,
+  describeImage,
+} from "../../src/lib/form";
 import { SupportedFontFamily } from "../../src/lib/types";
 
 function createFormData(entries: Record<string, string>) {
@@ -46,5 +51,17 @@ describe("FONT_LABELS", () => {
     expect(Object.keys(FONT_LABELS).sort()).toEqual(
       Object.values(SupportedFontFamily).sort()
     );
+  });
+});
+
+describe("describeImage", () => {
+  test("mentions the text and the seed", () => {
+    expect(describeImage(" v1.0 ", 42)).toBe(
+      "Generated image with the text “v1.0”, seed 42"
+    );
+  });
+
+  test("handles images without text or seed", () => {
+    expect(describeImage("", undefined)).toBe("Generated image without text");
   });
 });
