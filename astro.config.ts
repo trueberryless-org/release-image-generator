@@ -1,11 +1,11 @@
-// astro.config.mjs
 import netlify from "@astrojs/netlify";
+import node from "@astrojs/node";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://release-image-generator.trueberryless.org",
+  adapter: process.env["NETLIFY"] ? netlify() : node({ mode: "standalone" }),
   output: "server",
-  adapter: netlify(),
+  site: "https://release-image-generator.netlify.app",
   vite: {
     ssr: {
       external: ["canvas"],

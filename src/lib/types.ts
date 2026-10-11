@@ -47,22 +47,22 @@ export enum NoiseLevel {
 }
 
 export interface ImageGeneratorOptions {
-  text?: string;
-  width: number;
-  height: number;
   fontFamily: SupportedFontFamily;
   fontWeight: SupportedFontWeight;
-  primaryColor?: string;
+  height: number;
   imageFormat: SupportedImageFormat;
-  patternType?: SupportedPatternType;
   noiseLevel: NoiseLevel;
-  seed?: number;
+  patternType?: SupportedPatternType | undefined;
+  primaryColor?: string | undefined;
+  seed?: number | undefined;
+  text?: string | undefined;
+  width: number;
 }
 
 export interface OklchColor {
-  l: number; // lightness
-  c: number; // chroma
-  h: number; // hue
+  l: number;
+  c: number;
+  h: number;
 }
 
 export interface RgbColor {

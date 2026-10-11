@@ -17,23 +17,43 @@
     "dev": "astro dev",
     "preview": "astro preview",
     "start": "astro dev",
-    "version": "pnpm changeset version && pnpm i --no-frozen-lockfile"
+    "version": "pnpm changeset version && pnpm i --no-frozen-lockfile",
+    "check": "astro check",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "knip": "knip",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm build && playwright test"
   },
   "dependencies": {
-    "@astrojs/netlify": "^7.0.13",
-    "astro": "6.4.8",
+    "@astrojs/netlify": "^8.2.6",
+    "astro": "^7.3.5",
     "canvas": "^3.2.3",
-    "culori": "^4.0.2"
+    "culori": "^4.0.2",
+    "@astrojs/node": "^11.1.6"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.1",
     "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "@types/culori": "^4.0.1",
-    "@types/node": "^25.9.8",
-    "prettier": "3.9.8",
-    "prettier-plugin-astro": "0.14.1",
-    "typescript": "^5.9.3"
+    "@types/node": "^26.6.4",
+    "prettier": "3.9.9",
+    "typescript": "^6.0.3",
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "knip": "^6.39.0",
+    "oxlint": "^1.86.0",
+    "vitest": "^5.0.3",
+    "prettier-plugin-astro": "1.1.0"
   },
-  "packageManager": "pnpm@11.1.2"
+  "packageManager": "pnpm@11.28.0",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  }
 }
